@@ -21,6 +21,8 @@ using namespace DirectX;
 #pragma comment(lib, "dinput8.lib")
 #pragma comment(lib, "dxguid.lib")
 
+const float PI = 3.141592f;
+
 // ウィンドウプロシージャ
 LRESULT WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam) {
 	// メッセージに応じてゲーム固有の処理を行う
@@ -314,6 +316,23 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		0,1,2,	//三角形1つ目
 		1,2,3,	//三角形2つ目
 	};
+
+	float transformX = 0.0f;
+	float transformY = 0.0f;
+	float rotation = 0.0f;
+	float scale = 1.0f;
+
+	float affinTransform2Origin[3][3] = {
+		{1.0f, 0.0f, 0.0f}, {0.0f, 1.0f, 0.0f}, {0.0f, 0.0f, 1.0f} };
+
+	float affinTransform[3][3] = {
+		{1.0f, 0.0f, transformX}, {0.0f, 1.0f, transformY}, {0.0f, 0.0f, 1.0f} };
+
+	float affinScale[3][3] = {
+		{scale, 0.0f, 0.0f}, {0.0f, scale, 0.0f}, {0.0f, 0.0f, 1.0f} };
+
+	float affinRotate[3][3] = {
+		{cos(rotation), -sin(rotation), 0.0f}, {sin(rotation), cos(rotation), 0.0f}, {0.0f, 0.0f, 1.0f} };
 	
 	// 頂点データ全体のサイズ = 頂点データ一つ分のサイズ * 頂点データの要素数
 	UINT sizeVB = static_cast<UINT>(sizeof(XMFLOAT3) * _countof(vertices));
@@ -622,6 +641,152 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		keyboard->Acquire();
 		// 全キーの入力状態を取得する
 		keyboard->GetDeviceState(sizeof(keys), keys);
+
+		transformX = 0.0f;
+		transformY = 0.0f;
+		rotation = 0.0f;
+		scale = 1.0f;
+
+		// キー入力
+
+		//平行移動
+		if (keys[DIK_W]) {
+			transformY += 0.05f;
+		}
+
+		if (keys[DIK_S]) {
+			transformY -= 0.05f;
+		}
+
+		if (keys[DIK_A]) {
+			transformX -= 0.05f;
+		}
+
+		if (keys[DIK_D]) {
+			transformX += 0.05f;
+		}
+
+		// 拡大縮小
+		if (keys[DIK_Z]) {
+			scale -= 0.1f;
+		}
+
+		if (keys[DIK_C]) {
+			scale += 0.1f;
+		}
+
+
+		// 回転
+		if (keys[DIK_Q]) {
+			rotation -= PI / 32;
+		}
+
+		if (keys[DIK_E]) {
+			rotation += PI / 32;
+		}
+
+		// アフィン行列の生成
+
+		// 拡大縮小
+		{
+			affinScale[0][0] = scale;
+			affinScale[0][1] = 0.0f;
+			affinScale[0][2] = 0.0f;
+
+			affinScale[1][0] = 0.0f;
+			affinScale[1][1] = scale;
+			affinScale[1][2] = 0.0f;
+
+			affinScale[2][0] = 0.0f;
+			affinScale[2][1] = 0.0f;
+			affinScale[2][2] = 1.0f;
+		}
+
+		// 回転
+		{
+			affinRotate[0][0] = cos(rotation);
+			affinRotate[0][1] = -sin(rotation);
+			affinRotate[0][2] = 0.0f;
+
+			affinRotate[1][0] = sin(rotation);
+			affinRotate[1][1] = cos(rotation);
+			affinRotate[1][2] = 0.0f;
+
+			affinRotate[2][0] = 0.0f;
+			affinRotate[2][1] = 0.0f;
+			affinRotate[2][2] = 0.0f;
+		}
+
+		// 平行移動
+		{
+			affinTransform[0][0] = 1.0f;
+			affinTransform[0][1] = 0.0f;
+			affinTransform[0][2] = transformX;
+
+			affinTransform[1][0] = 0.0f;
+			affinTransform[1][1] = 1.0f;
+			affinTransform[1][2] = transformY;
+
+			affinTransform[2][0] = 0.0f;
+			affinTransform[2][1] = 0.0f;
+			affinTransform[2][2] = 1.0f;
+		}
+
+		//affin[0][0] = scale * cos(rotation);
+		//affin[0][1] = scale * (-sin(rotation));
+		//affin[0][2] = transformX;
+
+		//affin[1][0] = scale * sin(rotation);
+		//affin[1][1] = scale * cos(rotation);
+		//affin[1][2] = transformY;
+
+		//affin[2][0] = 0.0f;
+		//affin[2][1] = 0.0f;
+		//affin[2][2] = 1.0f;
+
+		// アフィン変換 - 拡大縮小
+		for (int i = 0; i < _countof(vertices); i++) {
+			float oldX = vertices[i].x;
+			float oldY = vertices[i].y;
+
+			vertices[i].x = oldX * affinScale[0][0] +
+				oldY * affinScale[0][1] + 1.0f * affinScale[0][2];
+			vertices[i].y = oldX * affinScale[1][0] +
+				oldY * affinScale[1][1] + 1.0f * affinScale[1][2];
+			vertices[i].z = oldX * affinScale[2][0] +
+				oldY * affinScale[2][1] + 1.0f * affinScale[2][2];
+		}
+
+		// アフィン変換 - 回転
+		for (int i = 0; i < _countof(vertices); i++) {
+			float oldX = vertices[i].x;
+			float oldY = vertices[i].y;
+
+			vertices[i].x = oldX * affinRotate[0][0] +
+				oldY * affinRotate[0][1] + 1.0f * affinRotate[0][2];
+			vertices[i].y = oldX * affinRotate[1][0] +
+				oldY * affinRotate[1][1] + 1.0f * affinRotate[1][2];
+			vertices[i].z = oldX * affinRotate[2][0] +
+				oldY * affinRotate[2][1] + 1.0f * affinRotate[2][2];
+		}
+
+		// アフィン変換 - 平行移動
+		for (int i = 0; i < _countof(vertices); i++) {
+			float oldX = vertices[i].x;
+			float oldY = vertices[i].y;
+
+			vertices[i].x = oldX * affinTransform[0][0] +
+				oldY * affinTransform[0][1] + 1.0f * affinTransform[0][2];
+			vertices[i].y = oldX * affinTransform[1][0] +
+				oldY * affinTransform[1][1] + 1.0f * affinTransform[1][2];
+			vertices[i].z = oldX * affinTransform[2][0] +
+				oldY * affinTransform[2][1] + 1.0f * affinTransform[2][2];
+		}
+
+		// 全頂点に対して
+		for (int i = 0; i < _countof(vertices); i++) {
+			vertMap[i] = vertices[i]; // 座標をコピー
+		}
 #pragma endregion
 
 		// DirectX毎フレーム処理　ここまで
