@@ -272,9 +272,65 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 	// 頂点データ
 	XMFLOAT3 vertices2[] = {
-	{ 0.0f, 0.0f, 0.0f }, // 左下 インデックス0
+	{ 0.0f, 0.2f, 0.0f }, // 左下 インデックス0
+	{ 0.0f, +0.7f, 0.0f }, // 左上 インデックス1
+	{ +0.5f, 0.2f, 0.0f }, // 右下 インデックス2
+	};
+
+	// 頂点データ
+	XMFLOAT3 vertices3[] = {
+	{ -0.5f, 0.0f, 0.0f }, // 左下 インデックス0
 	{ 0.0f, +0.5f, 0.0f }, // 左上 インデックス1
-	{ +0.5f, 0.0f, 0.0f }, // 右下 インデックス2
+	{ 0.0f, 0.0f, 0.0f }, // 右下 インデックス2
+	};
+
+	// 頂点データ
+	XMFLOAT3 vertices4[] = {
+	{ -0.1f, +0.4f, 0.0f }, // 左下 インデックス0
+	{ +0.4f, +0.9f, 0.0f }, // 左上 インデックス1
+	{ +0.4f, +0.4f, 0.0f }, // 右下 インデックス2
+	};
+
+	// 頂点データ
+	XMFLOAT3 vertices5[] = {
+	{ -1.0f, -0.8f, 0.0f }, // 左下 インデックス0
+	{ -1.0f, -0.3f, 0.0f }, // 左上 インデックス1
+	{ -0.5f, -0.3f, 0.0f }, // 右下 インデックス2
+	};
+
+	// 頂点データ
+	XMFLOAT3 vertices6[] = {
+	{ -0.9f, +0.3f, 0.0f }, // 左下 インデックス0
+	{ -0.4f, +0.8f, 0.0f }, // 左上 インデックス1
+	{ -0.4f, +0.3f, 0.0f }, // 右下 インデックス2
+	};
+
+	// 頂点データ
+	XMFLOAT3 vertices7[] = {
+	{ -0.4f, +0.9f, 0.0f }, // 左下 インデックス0
+	{ 0.0f, +0.9f, 0.0f }, // 左上 インデックス1
+	{ 0.0f, +0.3f, 0.0f }, // 右下 インデックス2
+	};
+
+	// 頂点データ
+	XMFLOAT3 vertices8[] = {
+	{ +0.9f, +0.3f, 0.0f }, // 左下 インデックス0
+	{ +0.4f, +0.8f, 0.0f }, // 左上 インデックス1
+	{ +0.4f, +0.3f, 0.0f }, // 右下 インデックス2
+	};
+
+	// 頂点データ
+	XMFLOAT3 vertices9[] = {
+	{ +0.9f, -0.5f, 0.0f }, // 左下 インデックス0
+	{ +0.6f, -1.0f, 0.0f }, // 左上 インデックス1
+	{ +0.6f, -0.5f, 0.0f }, // 右下 インデックス2
+	};
+
+	// 頂点データ
+	XMFLOAT3 vertices10[] = {
+	{ +0.7f, -0.8f, 0.0f }, // 左下 インデックス0
+	{ +0.3f, -0.3f, 0.0f }, // 左上 インデックス1
+	{ +0.3f, -0.8f, 0.0f }, // 右下 インデックス2
 	};
 
 	// インデックスデータ
@@ -284,7 +340,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	//};
 
 	ObjTriangle* triangle1 = new ObjTriangle(device, vertices);
-	ObjTriangle* triangle2 = new ObjTriangle(device,vertices2);
+	ObjTriangle* triangle2 = new ObjTriangle(device, vertices2);
+	ObjTriangle* triangle3 = new ObjTriangle(device, vertices3);
+	ObjTriangle* triangle4 = new ObjTriangle(device, vertices4);
+	ObjTriangle* triangle5 = new ObjTriangle(device, vertices5);
+	ObjTriangle* triangle6 = new ObjTriangle(device, vertices6);
+	ObjTriangle* triangle7 = new ObjTriangle(device, vertices7);
+	ObjTriangle* triangle8 = new ObjTriangle(device, vertices8);
+	ObjTriangle* triangle9 = new ObjTriangle(device, vertices9);
+	ObjTriangle* triangle10 = new ObjTriangle(device, vertices10);
 	
 
 	
@@ -544,6 +608,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		triangle1->Draw(commandList);
 		triangle2->Draw(commandList);
+		triangle3->Draw(commandList);
+		triangle4->Draw(commandList);
+		triangle5->Draw(commandList);
+		triangle6->Draw(commandList);
+		triangle7->Draw(commandList);
+		triangle8->Draw(commandList);
+		triangle9->Draw(commandList);
+		triangle10->Draw(commandList);
 		// ４．描画コマンドここまで
 
 #pragma endregion
@@ -588,6 +660,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	}
 	delete triangle1;
 	delete triangle2;
+	delete triangle3;
+	delete triangle4;
+	delete triangle5;
+	delete triangle6;
+	delete triangle7;
+	delete triangle8;
+	delete triangle9;
+	delete triangle10;
 
 
 	// ウィンドウクラスを登録解除
