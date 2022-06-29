@@ -10,7 +10,7 @@ ObjTriangle::ObjTriangle(ID3D12Device* device, XMFLOAT3 vertices[3])
 	}
 
 	// 頂点データ全体のサイズ = 頂点データ一つ分のサイズ * 頂点データの要素数
-	sizeVB = static_cast<UINT>(sizeof(XMFLOAT3) * _countof(this->vertices));
+	sizeVB = static_cast<UINT>(sizeof(vertices[0]) * _countof(this->vertices));
 
 	// 頂点バッファの設定
 	heapProp.Type = D3D12_HEAP_TYPE_UPLOAD; // GPUへの転送用
@@ -51,7 +51,8 @@ ObjTriangle::ObjTriangle(ID3D12Device* device, XMFLOAT3 vertices[3])
 	// 頂点バッファのサイズ
 	vbView.SizeInBytes = sizeVB;
 	// 頂点1つ分のデータサイズ
-	vbView.StrideInBytes = sizeof(XMFLOAT3);
+	vbView.StrideInBytes = sizeof(vertices[0]);
+
 
 	// 定数バッファ生成用の設定
 	// ヒープ設定
@@ -83,8 +84,40 @@ ObjTriangle::ObjTriangle(ID3D12Device* device, XMFLOAT3 vertices[3])
 	sResult = constBuffMaterial->Map(0, nullptr, (void**)&constMapMaterial);		// マッピング
 	assert(SUCCEEDED(sResult));
 
+
+	// 定数バッファ生成用の設定（3D行列変換）
+	{
+		// ヒープ設定
+		D3D12_HEAP_PROPERTIES cbHeapProp{};
+		cbHeapProp.Type = D3D12_HEAP_TYPE_UPLOAD;		// GPUへの転送
+		// リソース設定
+		D3D12_RESOURCE_DESC cbResourceDesc{};
+		cbResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
+		cbResourceDesc.Width = (sizeof(ConstBufferDataTransform) + 0xff) & ~0xff;	// 256バイトアラインメント
+		cbResourceDesc.Height = 1;
+		cbResourceDesc.DepthOrArraySize = 1;
+		cbResourceDesc.MipLevels = 1;
+		cbResourceDesc.SampleDesc.Count = 1;
+		cbResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
+
+		// 定数バッファの生成
+		sResult = device->CreateCommittedResource(
+			&cbHeapProp,
+			D3D12_HEAP_FLAG_NONE,
+			&cbResourceDesc,
+			D3D12_RESOURCE_STATE_GENERIC_READ,
+			nullptr,
+			IID_PPV_ARGS(&constBuffTransform));
+		assert(SUCCEEDED(sResult));
+
+		// 定数バッファのマッピング
+		sResult = constBuffTransform->Map(0, nullptr, (void**)&constMapTransform);
+		assert(SUCCEEDED(sResult));
+	}
+
 	// 値を書き込むと自動的に転送される
 	constMapMaterial->color = XMFLOAT4(1.0f, 0.0f, 0.0f, 0.5f);
+	constMapTransform->mat = XMMatrixIdentity();
 
 	// インデックスデータ全体のサイズ
 	sizeIB = static_cast<UINT>(sizeof(uint16_t) * _countof(indices));

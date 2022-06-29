@@ -20,6 +20,8 @@ public:
 
 	void Draw(ID3D12GraphicsCommandList* commandList);
 
+	ID3D12Resource* GetConstBuffMaterial() { return constBuffMaterial; };
+
 private:
 	// 頂点数
 	static const int kVertNum = 3;
@@ -95,6 +97,11 @@ private:
 
 #pragma region 描画初期化処理変数
 	// 頂点データ構造体
+	struct Vertex
+	{
+		XMFLOAT3 pos;	// xyz座標
+		XMFLOAT2 uv;	// uv座標
+	};
 
 	// 頂点データ
 	XMFLOAT3 vertices[kVertNum];
@@ -122,9 +129,14 @@ private:
 
 #pragma endregion
 #pragma endregion
-
+	// 定数バッファ用データ構造体（マテリアル）
 	struct ConstBufferDataMaterial {
 		XMFLOAT4 color;		// 色（RGBA）
+	};
+
+	// 定数バッファ用データ構造体（3D変換行列）
+	struct ConstBufferDataTransform {
+		XMMATRIX mat;
 	};
 
 	// 定数バッファ生成用の設定
@@ -136,9 +148,13 @@ private:
 
 	// 定数バッファの生成
 	ID3D12Resource* constBuffMaterial;
-
 	// 定数バッファのマッピング
 	ConstBufferDataMaterial* constMapMaterial;
+
+	// 定数バッファの生成（3D変換行列）
+	ID3D12Resource* constBuffTransform = nullptr;
+	// 定数バッファのマッピング（3D変換行列）
+	ConstBufferDataTransform* constMapTransform = nullptr;
 
 	// インデックスデータ全体のサイズ
 	UINT sizeIB;
