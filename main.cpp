@@ -588,10 +588,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	ConstBufferDataTransform* constMapTransform = nullptr;
 	float angle = 0.0f;		// カメラの回転角
 	// ビュー変換行列（グローバル変数）
-	XMMATRIX matView;
-	XMFLOAT3 eye(0, 0, -100);		// 視点座標
-	XMFLOAT3 target(0, 0, 0);		// 注視点座標
-	XMFLOAT3 up(0, 1, 0);			// 上方向ベクトル
 	{
 		// 定数バッファの生成（設定）
 		// ヒープ設定
@@ -640,7 +636,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		// ビュー変換行列
 		matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
-		constMapTransform->mat = matView * matProjection;
 	}
 
 #pragma region テクスチャマッピング
@@ -844,15 +839,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 		// 全キーの入力状態を取得する
 		keyboard->GetDeviceState(sizeof(keys), keys);
 #pragma endregion
-
-		if (keys[DIK_D] || keys[DIK_A]) 			{
-			if (keys[DIK_D]) { angle += XMConvertToRadians(1.0f); }
-			else if (keys[DIK_A]) { angle -= XMConvertToRadians(1.0f); }
-
-			// angleラジアンだけY軸周りに回転。半径は-100
-			eye.x = -100 * sinf(angle);
-			eye.z = -100 * cosf(angle);
-		}
 
 		// DirectX毎フレーム処理　ここまで
 #pragma endregion
