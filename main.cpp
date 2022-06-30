@@ -588,6 +588,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     ConstBufferDataTransform* constMapTransform = nullptr;
     float angle = 0.0f;		// カメラの回転角
     XMFLOAT3 position = { 0.0f,0.0f,0.0f };
+    XMFLOAT3 rotate = { 0.0f,15.0f,30.0f };
+    XMFLOAT3 scale = { 1.0f,0.5f,1.0f };
 
     // 射影変換行列（透視投影）
     XMMATRIX matProjection = XMMatrixPerspectiveFovLH(
@@ -632,10 +634,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
         // 単位行列を代入
         constMapTransform->mat = XMMatrixIdentity();
-
-        // ビュー変換行列
-        matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
-
     }
 
 #pragma region テクスチャマッピング
@@ -847,6 +845,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             // angleラジアンだけY軸周りに回転。半径は-100
             eye.x = -100 * sinf(angle);
             eye.z = -100 * cosf(angle);
+            // ビュー変換行列
+            matView = XMMatrixIdentity();
+            matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
         }
 
         // いずれかのキーを押していたら
@@ -863,14 +864,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         matWorld = XMMatrixIdentity();
         // スケーリング行列
         XMMATRIX matScale;
-        matScale = XMMatrixScaling(1.0f, 0.5f, 1.0f);
+        matScale = XMMatrixScaling(scale.x, scale.y, scale.z);
         matWorld *= matScale;	// ワールド行列にスケーリングを反映
          // 回転行列
         XMMATRIX matRot;
         matRot = XMMatrixIdentity();
-        matRot *= XMMatrixRotationZ(XMConvertToRadians(0.0f));		// Z軸周りの回転
-        matRot *= XMMatrixRotationX(XMConvertToRadians(15.0f));		// X軸周りの回転
-        matRot *= XMMatrixRotationY(XMConvertToRadians(30.0f));		// Y軸周りの回転
+        matRot *= XMMatrixRotationZ(XMConvertToRadians(rotate.x));		// Z軸周りの回転
+        matRot *= XMMatrixRotationX(XMConvertToRadians(rotate.y));		// X軸周りの回転
+        matRot *= XMMatrixRotationY(XMConvertToRadians(rotate.z));		// Y軸周りの回転
         matWorld *= matRot;		// ワールド行列に回転を反映
         // 平行移動行列
         XMMATRIX matTrans;
