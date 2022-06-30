@@ -592,6 +592,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 	XMFLOAT3 eye(0, 0, -100);		// 視点座標
 	XMFLOAT3 target(0, 0, 0);		// 注視点座標
 	XMFLOAT3 up(0, 1, 0);			// 上方向ベクトル
+	// 射影変換行列（透視投影）
+	XMMATRIX matProjection = XMMatrixPerspectiveFovLH(
+		XMConvertToRadians(45.0f),				// 上下画角45度
+		(float)window_width / window_height,	// アスペクト比（画面横幅/画面縦幅)
+		0.1f, 1000.0f							// 前端,奥端
+	);
 	{
 		// 定数バッファの生成（設定）
 		// ヒープ設定
@@ -623,24 +629,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 		// 単位行列を代入
 		constMapTransform->mat = XMMatrixIdentity();
-		// 射影変換行列（透視投影）
-		XMMATRIX matProjection = XMMatrixPerspectiveFovLH(
-			XMConvertToRadians(45.0f),				// 上下画角45度
-			(float)window_width / window_height,	// アスペクト比（画面横幅/画面縦幅)
-			0.1f, 1000.0f							// 前端,奥端
-		);
-		
-		// 平行投影行列の計算
-		constMapTransform->mat = XMMatrixOrthographicOffCenterLH(
-			0.0f,window_width,
-			window_height,0.0f,
-			0.0f, 1.0f
-		);
-
-
-		// ビュー変換行列
-		matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
-		constMapTransform->mat = matView * matProjection;
 	}
 
 #pragma region テクスチャマッピング
@@ -852,7 +840,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			// angleラジアンだけY軸周りに回転。半径は-100
 			eye.x = -100 * sinf(angle);
 			eye.z = -100 * cosf(angle);
+			// ビュー変換行列
+			matView = XMMatrixIdentity();
+			matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
 		}
+
+		constMapTransform->mat = matView * matProjection;
 
 		// DirectX毎フレーム処理　ここまで
 #pragma endregion
