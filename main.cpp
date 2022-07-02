@@ -600,6 +600,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
     // ビュー変換行列（グローバル変数）
     XMMATRIX matView;
+    matView = XMMatrixIdentity();
     XMFLOAT3 eye(0, 0, -100);		// 視点座標
     XMFLOAT3 target(0, 0, 0);		// 注視点座標
     XMFLOAT3 up(0, 1, 0);			// 上方向ベクトル
