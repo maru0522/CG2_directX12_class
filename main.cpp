@@ -633,9 +633,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 			0.0f, 1.0f
 		);
 
-
-		// ビュー変換行列
-		matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
+		constMapTransform->mat = matProjection;
 	}
 
 #pragma region テクスチャマッピング
