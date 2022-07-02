@@ -701,6 +701,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     XMFLOAT3 eye(0, 0, -100);		// 視点座標
     XMFLOAT3 target(0, 0, 0);		// 注視点座標
     XMFLOAT3 up(0, 1, 0);			// 上方向ベクトル
+    matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
     {
         // 定数バッファの生成（設定）
         // ヒープ設定
@@ -939,7 +940,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         keyboard->GetDeviceState(sizeof(keys), keys);
 #pragma endregion
 
-        matView = XMMatrixIdentity();
         if (keys[DIK_D] || keys[DIK_A]) {
             if (keys[DIK_D]) { angle += XMConvertToRadians(1.0f); }
             else if (keys[DIK_A]) { angle -= XMConvertToRadians(1.0f); }
