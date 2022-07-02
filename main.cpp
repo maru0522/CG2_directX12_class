@@ -934,7 +934,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         keyboard->GetDeviceState(sizeof(keys), keys);
 #pragma endregion
 
-        matView = XMMatrixIdentity();
+        
         if (keys[DIK_D] || keys[DIK_A]) {
             if (keys[DIK_D]) { angle += XMConvertToRadians(1.0f); }
             else if (keys[DIK_A]) { angle -= XMConvertToRadians(1.0f); }
