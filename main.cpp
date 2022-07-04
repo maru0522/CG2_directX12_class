@@ -701,7 +701,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     assert(SUCCEEDED(result));
 
     // 値を書き込むと自動的に転送される
-    constMapMaterial->color = XMFLOAT4(1.0f, 0.0f, 0.0f, 0.5f);		// RGBAで半透明の赤
+    constMapMaterial->color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);		// RGBAで半透明の赤
 
 
     // 定数バッファの生成準備（3D変換行列）
@@ -724,6 +724,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     XMFLOAT3 eye(0, 0, -100);		// 視点座標
     XMFLOAT3 target(0, 0, 0);		// 注視点座標
     XMFLOAT3 up(0, 1, 0);			// 上方向ベクトル
+    matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
     {
         // 定数バッファの生成（設定）
         // ヒープ設定
@@ -962,7 +963,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         keyboard->GetDeviceState(sizeof(keys), keys);
 #pragma endregion
 
-        matView = XMMatrixIdentity();
         if (keys[DIK_D] || keys[DIK_A]) {
             if (keys[DIK_D]) { angle += XMConvertToRadians(1.0f); }
             else if (keys[DIK_A]) { angle -= XMConvertToRadians(1.0f); }
