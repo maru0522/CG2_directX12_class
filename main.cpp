@@ -704,9 +704,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     constMapMaterial->color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);		// RGBAで半透明の赤
 
 
-    // 定数バッファの生成準備（3D変換行列）
-    ID3D12Resource* constBuffTransform = nullptr;
-    ConstBufferDataTransform* constMapTransform = nullptr;
+    // 定数バッファの生成準備0番（3D変換行列）
+    ID3D12Resource* constBuffTransform0 = nullptr;
+    ConstBufferDataTransform* constMapTransform0 = nullptr;
+    // 定数バッファの生成準備1番（3D変換行列）
+    ID3D12Resource* constBuffTransform1 = nullptr;
+    ConstBufferDataTransform* constMapTransform1 = nullptr;
+
+
     float angle = 0.0f;		// カメラの回転角
     XMFLOAT3 position = { 0.0f,0.0f,0.0f };
     XMFLOAT3 rotate = { 0.0f,0.0f,0.0f };
@@ -739,32 +744,44 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         cbResourceDesc.MipLevels = 1;
         cbResourceDesc.SampleDesc.Count = 1;
         cbResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-        // 定数バッファの生成
+        // 定数バッファの生成0番
         result = device->CreateCommittedResource(
             &cbHeapProp,	// ヒープ設定
             D3D12_HEAP_FLAG_NONE,
             &cbResourceDesc,	// リソース設定
             D3D12_RESOURCE_STATE_GENERIC_READ,
             nullptr,
-            IID_PPV_ARGS(&constBuffTransform)
+            IID_PPV_ARGS(&constBuffTransform0)
         );
         assert(SUCCEEDED(result));
-        // 定数バッファのマッピング
-        result = constBuffTransform->Map(0, nullptr, (void**)&constMapTransform);	// マッピング
+
+        // 定数バッファのマッピング0番
+        result = constBuffTransform0->Map(0, nullptr, (void**)&constMapTransform0);	// マッピング
         assert(SUCCEEDED(result));
 
 
-        // 単位行列を代入
-        constMapTransform->mat = XMMatrixIdentity();
+        // 定数バッファの生成1番
+        result = device->CreateCommittedResource(
+            &cbHeapProp,	// ヒープ設定
+            D3D12_HEAP_FLAG_NONE,
+            &cbResourceDesc,	// リソース設定
+            D3D12_RESOURCE_STATE_GENERIC_READ,
+            nullptr,
+            IID_PPV_ARGS(&constBuffTransform1)
+        );
+        assert(SUCCEEDED(result));
+        // 定数バッファのマッピング1番
+        result = constBuffTransform1->Map(0, nullptr, (void**)&constMapTransform1);	// マッピング
+        assert(SUCCEEDED(result));
     }
 
 #pragma region テクスチャマッピング
-    // 横方向ピクセル数
-    const size_t textureWidth = 256;
-    // 縦方向ピクセル数
-    const size_t textureHeight = 256;
-    // 配列の要素数
-    const size_t imageDataCount = textureWidth * textureHeight;
+    //// 横方向ピクセル数
+    //const size_t textureWidth = 256;
+    //// 縦方向ピクセル数
+    //const size_t textureHeight = 256;
+    //// 配列の要素数
+    //const size_t imageDataCount = textureWidth * textureHeight;
 
     //画像イメージデータ配列
     TexMetadata metadata{};
@@ -789,8 +806,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     // 読み込んだディフューズテクスチャをSRGBとして扱う
     metadata.format = MakeSRGB(metadata.format);
 
-    // 画像イメージデータ配列
-    XMFLOAT4* imageData = new XMFLOAT4[imageDataCount];		// ※必ず後で解放する
+    //// 画像イメージデータ配列
+    //XMFLOAT4* imageData = new XMFLOAT4[imageDataCount];		// ※必ず後で解放する
 
     //// 全ピクセルの色を初期化
     //for (size_t i = 0; i < imageDataCount; i++) {
@@ -843,8 +860,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         assert(SUCCEEDED(result));
     }
 
-    // 元データ解放
-    delete[] imageData;
+    //// 元データ解放
+    //delete[] imageData;
 
     // シェーダリソースビュー設定
     D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
@@ -973,6 +990,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             // ビュー変換行列
             matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
         }
+        if (keys[DIK_W] || keys[DIK_S]) {
+            if (keys[DIK_W]) { angle += XMConvertToRadians(10.0f); }
+            else if (keys[DIK_S]) { angle -= XMConvertToRadians(10.0f); }
+
+            // angleラジアンだけY軸周りに回転。 半径は -100
+            eye.y = -100 * sinf(angle);
+            eye.z = -100 * cosf(angle);
+
+            matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
+        }
 
         // いずれかのキーを押していたら
         if (keys[DIK_UP] || keys[DIK_DOWN] || keys[DIK_RIGHT] || keys[DIK_LEFT]) {
@@ -984,24 +1011,44 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         }
 
         // ワールド変換行列
-        XMMATRIX matWorld;
-        matWorld = XMMatrixIdentity();
+        XMMATRIX matWorld0;
+        XMMATRIX matWorld1;
+        matWorld0 = XMMatrixIdentity();
+        matWorld1 = XMMatrixIdentity();
+
         // スケーリング行列
-        XMMATRIX matScale;
-        matScale = XMMatrixScaling(scale.x, scale.y, scale.z);
-        matWorld *= matScale;	// ワールド行列にスケーリングを反映
+        XMMATRIX matScale0;
+        XMMATRIX matScale1;
+        matScale0 = XMMatrixScaling(scale.x, scale.y, scale.z);
+        matScale1 = XMMatrixScaling(scale.x, scale.y, scale.z);
+        
          // 回転行列
-        XMMATRIX matRot;
-        matRot = XMMatrixIdentity();
-        matRot *= XMMatrixRotationZ(XMConvertToRadians(rotate.x));		// Z軸周りの回転
-        matRot *= XMMatrixRotationX(XMConvertToRadians(rotate.y));		// X軸周りの回転
-        matRot *= XMMatrixRotationY(XMConvertToRadians(rotate.z));		// Y軸周りの回転
-        matWorld *= matRot;		// ワールド行列に回転を反映
+        XMMATRIX matRot0;
+        XMMATRIX matRot1;
+        matRot0 = XMMatrixIdentity();//単位行列を代入
+        matRot0 *= XMMatrixRotationZ(XMConvertToRadians(XM_PI / 4.0f));	// Z軸周りに45度回転
+
+        matRot1 = XMMatrixIdentity(); //単位行列を代入
+        matRot1 *= XMMatrixRotationY(XMConvertToRadians(XM_PI / 4.0f));	// Y軸周りに45度回転
+
         // 平行移動行列
-        XMMATRIX matTrans;
-        matTrans = XMMatrixTranslation(position.x, position.y, position.z);
-        matWorld *= matTrans;	// ワールド行列に平行移動を反映
-        constMapTransform->mat = matWorld * matView * matProjection;
+        XMMATRIX matTrans0;
+        XMMATRIX matTrans1;
+        matTrans0 = XMMatrixTranslation(position.x, position.y, position.z);
+        matTrans1 = XMMatrixTranslation(-20, 0, 0);
+
+
+        matWorld0 *= matScale0;	// ワールド行列にスケーリングを反映
+        matWorld1 *= matScale1;	// ワールド行列にスケーリングを反映
+        
+        matWorld0 *= matRot0;		// ワールド行列に回転を反映
+        matWorld1 *= matRot1;		// ワールド行列に回転を反映
+
+        matWorld0 *= matTrans0;	// ワールド行列に平行移動を反映
+        matWorld1 *= matTrans1;	// ワールド行列に平行移動を反映
+
+        constMapTransform0->mat = matWorld0 * matView * matProjection;
+        constMapTransform1->mat = matWorld1 * matView * matProjection;
 
         // DirectX毎フレーム処理　ここまで
 #pragma endregion
@@ -1048,8 +1095,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         // インデックスバッファビューの設定コマンド
         commandList->IASetIndexBuffer(&ibView);
 
-        // 定数バッファビュー(CBV)の設定コマンド
-        commandList->SetGraphicsRootConstantBufferView(0, constBuffMaterial->GetGPUVirtualAddress());
+        
         // SRVヒープの設定コマンド
         commandList->SetDescriptorHeaps(1, &srvHeap);
         // SRVヒープの先頭ハンドルを取得(SRVを指しているはず)
@@ -1057,10 +1103,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         // SRVヒープの先頭にあるSRVをルートパラメータ1番に設定
         commandList->SetGraphicsRootDescriptorTable(1, srvGpuHandle);
         // 定数バッファビュー(CBV)の設定コマンド
-        commandList->SetGraphicsRootConstantBufferView(2, constBuffTransform->GetGPUVirtualAddress());
+        commandList->SetGraphicsRootConstantBufferView(2, constBuffTransform0->GetGPUVirtualAddress());
+
+        // 0番定数バッファビュー(CBV)の設定コマンド
+        commandList->SetGraphicsRootConstantBufferView(2, constBuffTransform0->GetGPUVirtualAddress());
 
         // 描画コマンド
-        commandList->DrawIndexedInstanced(_countof(indices), 1, 0, 0, 0);
+        commandList->DrawIndexedInstanced(_countof(indices), 1, 0, 0, 0); // 全ての頂点を使って描画
+
+        // 1番定数バッファビュー(CBV)の設定コマンド
+        commandList->SetGraphicsRootConstantBufferView(2, constBuffTransform1->GetGPUVirtualAddress());
+
+        // 描画コマンド
+        commandList->DrawIndexedInstanced(_countof(indices), 1, 0, 0, 0); // 全ての頂点を使って描画
 
         // ４．描画コマンドここまで
 
