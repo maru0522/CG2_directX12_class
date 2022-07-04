@@ -932,6 +932,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         D3D12_RESOURCE_STATE_GENERIC_READ,
         nullptr,
         IID_PPV_ARGS(&texBuff));
+    assert(SUCCEEDED(result));
 
     // テクスチャバッファの生成2
     ID3D12Resource* texBuff2 = nullptr;
@@ -942,40 +943,41 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         D3D12_RESOURCE_STATE_GENERIC_READ,
         nullptr,
         IID_PPV_ARGS(&texBuff2));
+    assert(SUCCEEDED(result));
 
     // 全ミップマップについて
-    for (size_t i = 0; i < metadata.mipLevels; i++) {
-        // ミップマップレベルを指定してイメージを取得
-        const Image* img = scratchImg.GetImage(i, 0, 0);
-        // テクスチャバッファにデータ転送
+	for (size_t i = 0; i < metadata.mipLevels; i++)
+	{
+		// ミップマップレベルを指定してイメージを取得
+		const Image* img = scratchImg.GetImage(i, 0, 0);
 
-    //テクスチャバッファにデータ転送
-        result = texBuff->WriteToSubresource(
-            (UINT)i,
-            nullptr,              // 全領域へコピー
-            img->pixels,          // 元データアドレス
-            (UINT)img->rowPitch,  // 1ラインサイズ
-            (UINT)img->slicePitch // 1枚サイズ
-        );
-        assert(SUCCEEDED(result));
-    }
+		// テクスチャバッファにデータ転送
+		result = texBuff->WriteToSubresource(
+			(UINT)i,
+			nullptr,		// 全領域へコピー
+			img->pixels,	// 元データアドレス
+			(UINT)img->rowPitch,	// 1ラインサイズ
+			(UINT)img->slicePitch	// 全サイズ
+		);
+		assert(SUCCEEDED(result));
+	}
 
-    // 全ミップマップについて2
-    for (size_t i = 0; i < metadata2.mipLevels; i++) {
-        // ミップマップレベルを指定してイメージを取得
-        const Image* img2 = scratchImg2.GetImage(i, 0, 0);
-        // テクスチャバッファにデータ転送
+	// 全ミップマップについて
+	for (size_t i = 0; i < metadata2.mipLevels; i++)
+	{
+		// ミップマップレベルを指定してイメージを取得
+		const Image* img2 = scratchImg2.GetImage(i, 0, 0);
 
-    //テクスチャバッファにデータ転送
-        result = texBuff2->WriteToSubresource(
-            (UINT)i,
-            nullptr,              // 全領域へコピー
-            img2->pixels,          // 元データアドレス
-            (UINT)img2->rowPitch,  // 1ラインサイズ
-            (UINT)img2->slicePitch // 1枚サイズ
-        );
-        assert(SUCCEEDED(result));
-    }
+		// テクスチャバッファにデータ転送
+		result = texBuff2->WriteToSubresource(
+			(UINT)i,
+			nullptr,		// 全領域へコピー
+			img2->pixels,	// 元データアドレス
+			(UINT)img2->rowPitch,	// 1ラインサイズ
+			(UINT)img2->slicePitch	// 全サイズ
+		);
+		assert(SUCCEEDED(result));
+	}
 
     //// 元データ解放
     //delete[] imageData;
@@ -985,10 +987,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
     // シェーダリソースビュー設定
     D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
-    srvDesc.Format = resDesc.Format;
+    srvDesc.Format = textureResourceDesc.Format;
     srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
     srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-    srvDesc.Texture2D.MipLevels = resDesc.MipLevels;
+    srvDesc.Texture2D.MipLevels = textureResourceDesc.MipLevels;
 
     // ハンドルのさす位置にシェーダーリソースビューの作成
     device->CreateShaderResourceView(texBuff, &srvDesc, srvHandle);
