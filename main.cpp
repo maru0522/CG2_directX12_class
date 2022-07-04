@@ -759,6 +759,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         result = constBuffTransform0->Map(0, nullptr, (void**)&constMapTransform0);	// マッピング
         assert(SUCCEEDED(result));
 
+        // 単位行列を代入
+        constMapTransform0->mat = XMMatrixIdentity();
+
 
         // 定数バッファの生成1番
         result = device->CreateCommittedResource(
@@ -773,6 +776,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         // 定数バッファのマッピング1番
         result = constBuffTransform1->Map(0, nullptr, (void**)&constMapTransform1);	// マッピング
         assert(SUCCEEDED(result));
+
+        // 単位行列を代入
+        constMapTransform1->mat = XMMatrixIdentity();
     }
 
 #pragma region テクスチャマッピング
@@ -980,6 +986,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         keyboard->GetDeviceState(sizeof(keys), keys);
 #pragma endregion
 
+        matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
         if (keys[DIK_D] || keys[DIK_A]) {
             if (keys[DIK_D]) { angle += XMConvertToRadians(1.0f); }
             else if (keys[DIK_A]) { angle -= XMConvertToRadians(1.0f); }
@@ -1012,43 +1019,41 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
         // ワールド変換行列
         XMMATRIX matWorld0;
-        XMMATRIX matWorld1;
         matWorld0 = XMMatrixIdentity();
-        matWorld1 = XMMatrixIdentity();
-
         // スケーリング行列
         XMMATRIX matScale0;
-        XMMATRIX matScale1;
         matScale0 = XMMatrixScaling(scale.x, scale.y, scale.z);
-        matScale1 = XMMatrixScaling(scale.x, scale.y, scale.z);
-        
-         // 回転行列
+        // 回転行列
         XMMATRIX matRot0;
-        XMMATRIX matRot1;
         matRot0 = XMMatrixIdentity();//単位行列を代入
         matRot0 *= XMMatrixRotationZ(XM_PI / 4.0f);	// Z軸周りに45度回転
-
-        matRot1 = XMMatrixIdentity(); //単位行列を代入
-        matRot1 *= XMMatrixRotationY(XM_PI / 4.0f);	// Y軸周りに45度回転
-
         // 平行移動行列
         XMMATRIX matTrans0;
-        XMMATRIX matTrans1;
         matTrans0 = XMMatrixTranslation(position.x, position.y, position.z);
-        matTrans1 = XMMatrixTranslation(-20, 0, 0);
-
-
-        matWorld0 *= matScale0;	// ワールド行列にスケーリングを反映
-        matWorld1 *= matScale1;	// ワールド行列にスケーリングを反映
-        
-        matWorld0 *= matRot0;		// ワールド行列に回転を反映
-        matWorld1 *= matRot1;		// ワールド行列に回転を反映
-
-        matWorld0 *= matTrans0;	// ワールド行列に平行移動を反映
-        matWorld1 *= matTrans1;	// ワールド行列に平行移動を反映
-
+        // ワールド行列を合成
+        matWorld0 = matScale0 * matRot0 * matTrans0;
+        // ワールド、ビュー、射影行列を合成してシェーダに転送
         constMapTransform0->mat = matWorld0 * matView * matProjection;
+
+
+        // ワールド変換行列
+        XMMATRIX matWorld1;
+        matWorld1 = XMMatrixIdentity();
+        // スケーリング行列
+        XMMATRIX matScale1;
+        matScale1 = XMMatrixScaling(1.0f, 1.0f, 1.0f);
+        //回転行列
+        XMMATRIX matRot1;
+        matRot1 = XMMatrixIdentity(); //単位行列を代入
+        matRot1 *= XMMatrixRotationY(XM_PI / 4.0f);	// Y軸周りに45度回転
+        // 平行移動行列
+        XMMATRIX matTrans1;
+        matTrans1 = XMMatrixTranslation(-20, 0, 0);
+        // ワールド行列を合成
+        matWorld1 = matScale1 * matRot1 * matTrans1;
+        // ワールド、ビュー、射影行列を合成してシェーダに転送
         constMapTransform1->mat = matWorld1 * matView * matProjection;
+
 
         // DirectX毎フレーム処理　ここまで
 #pragma endregion
@@ -1095,7 +1100,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         // インデックスバッファビューの設定コマンド
         commandList->IASetIndexBuffer(&ibView);
 
-        
+
         // SRVヒープの設定コマンド
         commandList->SetDescriptorHeaps(1, &srvHeap);
         // SRVヒープの先頭ハンドルを取得(SRVを指しているはず)
