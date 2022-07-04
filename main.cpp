@@ -1026,10 +1026,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         XMMATRIX matRot0;
         XMMATRIX matRot1;
         matRot0 = XMMatrixIdentity();//単位行列を代入
-        matRot0 *= XMMatrixRotationZ(XMConvertToRadians(XM_PI / 4.0f));	// Z軸周りに45度回転
+        matRot0 *= XMMatrixRotationZ(XM_PI / 4.0f);	// Z軸周りに45度回転
 
         matRot1 = XMMatrixIdentity(); //単位行列を代入
-        matRot1 *= XMMatrixRotationY(XMConvertToRadians(XM_PI / 4.0f));	// Y軸周りに45度回転
+        matRot1 *= XMMatrixRotationY(XM_PI / 4.0f);	// Y軸周りに45度回転
 
         // 平行移動行列
         XMMATRIX matTrans0;
@@ -1102,8 +1102,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         D3D12_GPU_DESCRIPTOR_HANDLE srvGpuHandle = srvHeap->GetGPUDescriptorHandleForHeapStart();
         // SRVヒープの先頭にあるSRVをルートパラメータ1番に設定
         commandList->SetGraphicsRootDescriptorTable(1, srvGpuHandle);
-        // 定数バッファビュー(CBV)の設定コマンド
-        commandList->SetGraphicsRootConstantBufferView(2, constBuffTransform0->GetGPUVirtualAddress());
 
         // 0番定数バッファビュー(CBV)の設定コマンド
         commandList->SetGraphicsRootConstantBufferView(2, constBuffTransform0->GetGPUVirtualAddress());
