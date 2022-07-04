@@ -1101,12 +1101,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         commandList->IASetIndexBuffer(&ibView);
 
 
+        commandList->SetGraphicsRootConstantBufferView(0, constBuffMaterial->GetGPUVirtualAddress());
         // SRVヒープの設定コマンド
         commandList->SetDescriptorHeaps(1, &srvHeap);
         // SRVヒープの先頭ハンドルを取得(SRVを指しているはず)
         D3D12_GPU_DESCRIPTOR_HANDLE srvGpuHandle = srvHeap->GetGPUDescriptorHandleForHeapStart();
         // SRVヒープの先頭にあるSRVをルートパラメータ1番に設定
         commandList->SetGraphicsRootDescriptorTable(1, srvGpuHandle);
+
 
         // 0番定数バッファビュー(CBV)の設定コマンド
         commandList->SetGraphicsRootConstantBufferView(2, constBuffTransform0->GetGPUVirtualAddress());
