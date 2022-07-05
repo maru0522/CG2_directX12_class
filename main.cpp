@@ -916,11 +916,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     // リソース設定2
     D3D12_RESOURCE_DESC textureResourceDesc2{};
     textureResourceDesc2.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
-    textureResourceDesc2.Format = metadata.format;
-    textureResourceDesc2.Width = metadata.width;
-    textureResourceDesc2.Height = (UINT)metadata.height;
-    textureResourceDesc2.DepthOrArraySize = (UINT16)metadata.arraySize;
-    textureResourceDesc2.MipLevels = (UINT16)metadata.mipLevels;
+    textureResourceDesc2.Format = metadata2.format;
+    textureResourceDesc2.Width = metadata2.width;
+    textureResourceDesc2.Height = (UINT)metadata2.height;
+    textureResourceDesc2.DepthOrArraySize = (UINT16)metadata2.arraySize;
+    textureResourceDesc2.MipLevels = (UINT16)metadata2.mipLevels;
     textureResourceDesc2.SampleDesc.Count = 1;
 
     // テクスチャバッファの生成
