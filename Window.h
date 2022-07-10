@@ -16,5 +16,7 @@ public:
 public:
 	// Windowクラスの設定
 	void CreateObj();
+	void CreateObj(LPCWSTR title);			// 使う際は（L"title"）と記述すること
+	void DeleteObj();
 };
 

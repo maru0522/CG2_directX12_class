@@ -48,7 +48,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     MSG msg{}; // メッセージ
 
     Window window;
-    window.CreateObj();
+    window.CreateObj(L"MyEngine");
 
 #pragma endregion
 
@@ -1260,6 +1260,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
     }
 
+    window.DeleteObj();
 
     return 0;
 }
