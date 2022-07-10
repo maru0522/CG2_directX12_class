@@ -18,4 +18,5 @@
 using namespace DirectX;
 
 
+// ウィンドウプロシージャ
 LRESULT WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);

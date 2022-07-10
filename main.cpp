@@ -1260,7 +1260,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
     }
 
-    window.DeleteObj();
 
     return 0;
 }
