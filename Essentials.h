@@ -8,6 +8,7 @@
 #include <DirectXMath.h>    // CG2_02_01   5–‡–Ú
 #include <d3dcompiler.h>    // CG2_02_01   23–‡–Ú
 #include <DirectXTex.h>     // CG2_04_03   11–‡–Ú
+#include <wrl.h>            // CG2_07_01   13–‡–Ú
 
 
 #pragma comment(lib, "d3d12.lib")           // Essentials.h   4s–Ú

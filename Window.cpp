@@ -1,5 +1,11 @@
 ﻿#include "Window.h"
 
+#pragma region 
+namespace {
+    std::wstring ConvertString(std::string text)
+}
+#pragma endregion
+
 #pragma region ウィンドウの生成
 
 void Window::CreateObj()
@@ -75,7 +81,6 @@ void Window::DeleteObj()
 }
 
 #pragma endregion
-
 
 #pragma region メッセージループ
 

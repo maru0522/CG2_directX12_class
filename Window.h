@@ -3,26 +3,40 @@
 
 class Window
 {
-public:
+public: // 静的メンバ変数
 	// ウィンドウサイズ
-	const int width = 1280;
-	const int height = 720;
+	static const int width = 1280;
+	static const int height = 720;
 
-	// ウィンドウクラスの設定
-	WNDCLASSEX w{};
-	// ウィンドウハンドルの生成
-	HWND hwnd;
+public: // 静的メンバ関数
+	static Window* GetInstance();
 
+
+public: // メンバ変数
 	// メッセージ
 	MSG msg{};
 
-public:
+public: // メンバ関数
 	// Windowクラスの設定
 	void CreateObj();
-	void CreateObj(LPCWSTR title);			// 使う際は（L"title"）と記述すること
+	void CreateObj(LPCWSTR title);
 	void DeleteObj();
 
 	// ウィンドウ固定用のメッセージループ処理
 	// WM_QUITならFALSEを返す
 	bool IsKeep();
+
+
+private: // メンバ変数
+	// ウィンドウクラスの設定
+	WNDCLASSEX w{};
+	// ウィンドウハンドルの生成
+	HWND hwnd;
+
+private: // メンバ関数
+	// シングルトン
+	Window();
+	~Window();
+	Window(const Window&) = delete;
+	const Window& operator=(const Window&) = delete;
 };
