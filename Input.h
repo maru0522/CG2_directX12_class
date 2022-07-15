@@ -14,7 +14,7 @@ namespace Input
 
 
     public:
-        void Initialize();
+        //void Initialize();
     };
 };
 
