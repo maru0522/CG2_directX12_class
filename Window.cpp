@@ -1,6 +1,5 @@
 ﻿#include "Window.h"
 
-#pragma region 文字変換処理関数
 namespace {
     // ワイド文字に変換
     std::wstring ConvertString(const std::string& text) {
@@ -22,17 +21,13 @@ namespace {
         return result;
     }
 }
-#pragma endregion
 
-#pragma region シングルトンインスタンスの取得
 Window* Window::GetInstance()
 {
     static Window instance;
     return &instance;
 }
-#pragma endregion
 
-#pragma region ウィンドウの生成
 const wchar_t Window::windowClassName[] = L"mEngine";
 
 void Window::CreateObj()
@@ -109,9 +104,7 @@ void Window::DeleteObj()
 {
     UnregisterClass(w.lpszClassName, w.hInstance);
 }
-#pragma endregion
 
-#pragma region メッセージループ
 bool Window::IsKeep()
 {
     // メッセージ
@@ -127,4 +120,4 @@ bool Window::IsKeep()
     // ✖ボタンで終了メッセージが来たらゲームループを抜ける
     return msg.message != WM_QUIT;
 }
-#pragma endregion
+
