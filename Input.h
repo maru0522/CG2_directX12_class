@@ -12,15 +12,16 @@ namespace Input
     class Keyboard
     {
     public: // 静的なメンバ関数
+        // シングルトンインスタンスの取得
         static Keyboard* GetInstance();
 
     public: // メンバ関数
-        void Initialize();
+        void Initialize();  
         void Update();
 
-        bool isTrigger(UINT8 key);
-        bool isDown(UINT8 key);
-        bool isReleased(UINT8 key);
+        bool isTrigger(UINT8 key);  // 押した瞬間
+        bool isDown(UINT8 key);     // 押されているとき
+        bool isReleased(UINT8 key); // 離された瞬間
 
     private: // メンバ変数
         IDirectInput8* directInput = nullptr;

@@ -12,8 +12,7 @@ void Input::Keyboard::Initialize()
 
     // DirectInputの初期化
     HRESULT result = DirectInput8Create(
-        window->GetHInstance(), DIRECTINPUT_VERSION, IID_IDirectInput8,
-        (void**)&directInput, nullptr);
+        window->GetHInstance(), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&directInput, nullptr);
     assert(SUCCEEDED(result));
 
     // キーボードデバイスの生成

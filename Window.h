@@ -12,6 +12,7 @@ public: // 静的メンバ変数
 	static const wchar_t windowClassName[];
 
 public: // 静的メンバ関数
+	// シングルトンインスタンスの取得
 	static Window* GetInstance();
 
 public: // メンバ関数

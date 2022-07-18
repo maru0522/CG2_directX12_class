@@ -7,9 +7,11 @@ namespace {
             return std::wstring();
         }
 
-        // ref: https://docs.microsoft.com/ja-JP/windows/win32/api/stringapiset/nf-stringapiset-multibytetowidechar
-        // ref: http://www.t-net.ne.jp/~cyfis/win_api/sdk/MultiByteToWideChar.html
-        // ref: http://chokuto.ifdef.jp/urawaza/api/MultiByteToWideChar.html
+        /*
+         * ref: https://docs.microsoft.com/ja-JP/windows/win32/api/stringapiset/nf-stringapiset-multibytetowidechar
+         * ref: http://www.t-net.ne.jp/~cyfis/win_api/sdk/MultiByteToWideChar.html
+         * ref: http://chokuto.ifdef.jp/urawaza/api/MultiByteToWideChar.html
+         */
         int wcharNum =
             MultiByteToWideChar(CP_ACP, 0, text.c_str(), static_cast<int>(text.size()), NULL, 0);
         if (wcharNum == 0) {
