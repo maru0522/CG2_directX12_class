@@ -24,8 +24,11 @@ namespace Input
         bool isReleased(UINT8 key); // 離された瞬間
 
     private: // メンバ変数
-        IDirectInput8* directInput = nullptr;
-        IDirectInputDevice8* keyboard = nullptr;
+        // エイリアステンプレート
+        template<class T> using Comptr = Microsoft::WRL::ComPtr<T>;
+
+        Comptr<IDirectInput8> directInput = nullptr;
+        Comptr<IDirectInputDevice8> keyboard = nullptr;
         std::array<BYTE, 256> preKeys;
         std::array<BYTE, 256> keys;
 
