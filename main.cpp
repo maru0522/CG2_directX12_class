@@ -2,6 +2,7 @@
 #include "Window.h"
 #include "Input.h"
 #include "InitDirectX.h"
+#include "DebugCamera.h"
 #include<math.h>
 
 
@@ -495,11 +496,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     );
 
     // ビュー変換行列（グローバル変数）
-    XMMATRIX matView;
-    XMFLOAT3 eye(0, 0, -100);		// 視点座標
-    XMFLOAT3 target(0, 0, 0);		// 注視点座標
-    XMFLOAT3 up(0, 1, 0);			// 上方向ベクトル
-    matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
+    DebugCamera devCamera;
+    devCamera.SetCamEye(0, 0, -100 );
+    devCamera.SetCamTarget(0, 0, 0 );
+    devCamera.SetCamUp(0, 1, 0);
+    devCamera.Initialize();
+
 #pragma region 構造化に伴いコメントアウト
     //{
     //    // 定数バッファの生成（設定）
@@ -803,7 +805,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         keyboard->Update();
 #pragma endregion
 
-        matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
+        devCamera.Update();
 #pragma region 構造化に伴いコメントアウト
         //if (keys[DIK_D] || keys[DIK_A]) {
         //    if (keys[DIK_D]) { angle += XMConvertToRadians(1.0f); }
@@ -880,8 +882,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             else if (keyboard->isDown(DIK_D)) { object3ds[0].position.x += 1.0f; }
         }
 
+        XMMATRIX _matView = devCamera.GetMatView();
+
         for (size_t i = 0; i < _countof(object3ds); i++)             {
-            UpdateObject3d(&object3ds[i], matView, matProjection);
+            UpdateObject3d(&object3ds[i], _matView, matProjection);
+
         }
 
         // DirectX毎フレーム処理　ここまで
