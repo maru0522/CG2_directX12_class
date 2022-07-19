@@ -3,6 +3,7 @@
 #include "Input.h"
 #include "InitDirectX.h"
 #include "DebugCamera.h"
+#include "Object3d.h"
 #include<math.h>
 
 
@@ -10,34 +11,6 @@
 struct ConstBufferDataMaterial {
     XMFLOAT4 color;		// 色（RGBA）
 };
-// 定数バッファ用データ構造体（3D変換行列）
-struct ConstBufferDataTransform {
-    XMMATRIX mat;		// 3D変換行列
-};
-
-// 3Dオブジェクト型
-struct Object3d
-{
-    // 定数バッファ（行列用）
-    ID3D12Resource* constBuffTransform;
-    // 定位数バッファマップ（行列用)
-    ConstBufferDataTransform* constMapTransform;
-    // アフィン変換情報
-    XMFLOAT3 scale = { 1,1,1 };
-    XMFLOAT3 rotation = { 0,0,0 };
-    XMFLOAT3 position = { 0,0,0 };
-    // ワールド変換行列
-    XMMATRIX matWorld;
-    // 親オブジェクトへのポインタ
-    Object3d* parent = nullptr;
-};
-
-// 3Dオブジェクト初期化
-void InitializeObject3d(Object3d* object, ID3D12Device* device);
-
-void UpdateObject3d(Object3d* object, XMMATRIX& matView, XMMATRIX& matProjection);
-
-void DrawObject3d(Object3d* object, ID3D12GraphicsCommandList* commandList, D3D12_VERTEX_BUFFER_VIEW& vbView, D3D12_INDEX_BUFFER_VIEW& ibView, UINT numIndices);
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
@@ -470,7 +443,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     // 配列内の全オブジェクトに対して
     for (int i = 0; i < _countof(object3ds); i++) {
         // 初期化
-        InitializeObject3d(&object3ds[i], iDX->GetDevice());
+        object3ds[i].Initialize();
 
         // ここからは親子構造のサンプル
         // 先頭以外なら
@@ -479,28 +452,17 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             //object3ds[i].parent = &object3ds[i-1];
             // 親オブジェクトの９割の大きさ
             //object3ds[i].scale = { 0.9f,0.9f,0.9f };
-            object3ds[i].scale = { 1.0f,1.0f,1.0f };
+            object3ds[i].SetScale(1.0f, 1.0f, 1.0f);
             // 親オブジェクトに対してZ 軸周りに30度回転
-            object3ds[i].rotation = { 0.0f, 0.0f, 30.0f * i };
-
+            object3ds[i].SetRotate(0.0f, 0.0f, 30.0f * i);
             // 親オブジェクトに対してZ方向-8.0ずらす
-            object3ds[i].position = { 0.0f,0.0f,-8.0f };
+            object3ds[i].SetPos(0.0f, 0.0f, -8.0f);
         }
     }
-    
-    // 射影変換行列（透視投影）
-    XMMATRIX matProjection = XMMatrixPerspectiveFovLH(
-        XMConvertToRadians(45.0f),				// 上下画角45度
-        (float)window->width / window->height,	// アスペクト比（画面横幅/画面縦幅)
-        0.1f, 1000.0f							// 前端,奥端
-    );
 
     // ビュー変換行列（グローバル変数）
     DebugCamera devCamera;
-    devCamera.SetCamEye(0, 0, -100 );
-    devCamera.SetCamTarget(0, 0, 0 );
-    devCamera.SetCamUp(0, 1, 0);
-    devCamera.Initialize();
+    devCamera.InitializeDef();
 
 #pragma region 構造化に伴いコメントアウト
     //{
@@ -875,18 +837,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         //constMapTransform1->mat = matWorld1 * matView * matProjection;
 #pragma endregion
 
-        if (keyboard->isDown(DIK_W) || keyboard->isDown(DIK_S) || keyboard->isDown(DIK_A) || keyboard->isDown(DIK_D)) {
+        /*if (keyboard->isDown(DIK_W) || keyboard->isDown(DIK_S) || keyboard->isDown(DIK_A) || keyboard->isDown(DIK_D)) {
             if (keyboard->isDown(DIK_W)) { object3ds[0].position.y += 1.0f; }
             else if (keyboard->isDown(DIK_S)) { object3ds[0].position.y -= 1.0f; }
             if (keyboard->isDown(DIK_A)) { object3ds[0].position.x -= 1.0f; }
             else if (keyboard->isDown(DIK_D)) { object3ds[0].position.x += 1.0f; }
-        }
-
-        XMMATRIX _matView = devCamera.GetMatView();
+        }*/
 
         for (size_t i = 0; i < _countof(object3ds); i++)             {
-            UpdateObject3d(&object3ds[i], _matView, matProjection);
-
+            object3ds[i].Update(devCamera.GetMatView(), devCamera.GetMatProjection());
         }
 
         // DirectX毎フレーム処理　ここまで
@@ -918,9 +877,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         srvGpuHandle.ptr += incrementSize;
         iDX->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvGpuHandle);
 
+        UINT _numIndecies = _countof(indices);
         // 全オブジェクトについて処理
         for (int i = 0; i < _countof(object3ds); i++) {
-            DrawObject3d(&object3ds[i], iDX->GetCommandList(), vbView, ibView, _countof(indices));
+            object3ds[i].Draw(vbView, ibView, _numIndecies);
         }
 
 #pragma region 構造化に伴いコメントアウト
@@ -952,80 +912,4 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     window->DeleteObj();
 
     return 0;
-}
-
-void InitializeObject3d(Object3d* object, ID3D12Device* device)
-{
-    HRESULT result;
-
-    // 定数バッファのヒープ設定
-    D3D12_HEAP_PROPERTIES heapProp{};
-    heapProp.Type = D3D12_HEAP_TYPE_UPLOAD;
-    // 定数バッファのリソース設定
-    D3D12_RESOURCE_DESC resDesc{};
-    resDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-    resDesc.Width = (sizeof(ConstBufferDataTransform) + 0xff) & ~0xff;
-    resDesc.Height = 1;
-    resDesc.DepthOrArraySize = 1;
-    resDesc.MipLevels = 1;
-    resDesc.SampleDesc.Count = 1;
-    resDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-
-    // 定数バッファの生成
-    result = device->CreateCommittedResource(
-        &heapProp,
-        D3D12_HEAP_FLAG_NONE,
-        &resDesc,
-        D3D12_RESOURCE_STATE_GENERIC_READ,
-        nullptr,
-        IID_PPV_ARGS(&object->constBuffTransform)
-    );
-    assert(SUCCEEDED(result));
-
-    // 定数バッファのマッピング
-    result = object->constBuffTransform->Map(0,nullptr,(void**)&object->constMapTransform);
-    assert(SUCCEEDED(result));
-}
-
-void UpdateObject3d(Object3d* object, XMMATRIX& matView, XMMATRIX& matProjection)
-{
-    XMMATRIX matScale, matRot, matTrans;
-
-    // スケール、回転、平行移動行列の計算
-    matScale = XMMatrixScaling(object->scale.x, object->scale.y, object->scale.z);
-    matRot = XMMatrixIdentity();
-    matRot *= XMMatrixRotationZ(object->rotation.z);
-    matRot *= XMMatrixRotationX(object->rotation.x);
-    matRot *= XMMatrixRotationY(object->rotation.y);
-    matTrans = XMMatrixTranslation(
-        object->position.x, object->position.y, object->position.x
-    );
-
-    // ワールド行列の合成
-    object->matWorld = XMMatrixIdentity();  // 変形をリセット
-    object->matWorld *= matScale;           // ワールド行列にスケーリングを反映
-    object->matWorld *= matRot;             // ワールド行列に回転を反映
-    object->matWorld *= matTrans;           // ワールド行列に平行移動を反映
-
-    // 親オブジェクトがあれば
-    if (object->parent != nullptr) {
-        //親オブジェクトのワールド行列をかける
-        object->matWorld *= object->parent->matWorld;
-    }
-
-    // 定数バッファへデータ転送
-    object->constMapTransform->mat = object->matWorld * matView * matProjection;
-}
-
-void DrawObject3d(Object3d* object, ID3D12GraphicsCommandList* commandList, D3D12_VERTEX_BUFFER_VIEW& vbView, D3D12_INDEX_BUFFER_VIEW& ibView, UINT numIndices)
-{
-    // 頂点バッファの設定
-    commandList->IASetVertexBuffers(0, 1, &vbView);
-    // インデックスバッファの設定
-    commandList->IASetIndexBuffer(&ibView);
-    // 定数バッファビュー（CBV）の設定コマンド
-    commandList->SetGraphicsRootConstantBufferView(2, object->constBuffTransform->GetGPUVirtualAddress());
-
-    // 描画コマンドリスト
-    commandList->DrawIndexedInstanced(numIndices, 1, 0, 0, 0);
 }
