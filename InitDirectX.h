@@ -4,8 +4,6 @@
 class InitDirectX
 {
 public: // 静的なメンバ関数
-    // シングルトンインスタンスの取得
-    static InitDirectX* GetInstance();
 
 public: // メンバ変数
 
@@ -48,10 +46,6 @@ private: // メンバ変数
     D3D12_RESOURCE_BARRIER barrierDesc{};
 
 private: // メンバ関数
-    InitDirectX() = default;
-    ~InitDirectX() = default;
-    InitDirectX(const InitDirectX&) = delete;
-    const InitDirectX& operator=(const InitDirectX&) = delete;
 
     // デバイスの生成
     void DXGIDevice();
@@ -69,3 +63,4 @@ private: // メンバ関数
     void Fence();
 };
 
+InitDirectX* GetInstanceIDX();

@@ -1,12 +1,6 @@
 #include "InitDirectX.h"
 #include "Window.h"
 
-InitDirectX* InitDirectX::GetInstance()
-{
-    static InitDirectX instance;
-    return &instance;
-}
-
 void InitDirectX::Initialize()
 {
     DXGIDevice();
@@ -379,4 +373,11 @@ void InitDirectX::Fence()
     // ƒtƒFƒ“ƒX‚Ì¶¬
     result = device->CreateFence(fenceVal, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&fence));
 #pragma endregion
+}
+
+static InitDirectX iDX;
+
+InitDirectX* GetInstanceIDX()
+{
+    return &iDX;
 }

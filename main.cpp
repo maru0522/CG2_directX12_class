@@ -27,9 +27,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     HRESULT result = S_FALSE;
 
     // DirectXの初期化
-    InitDirectX* iDX = nullptr;
-    iDX = InitDirectX::GetInstance();
-    iDX->Initialize();
+    GetInstanceIDX()->Initialize();
 
 #pragma endregion
 
@@ -150,7 +148,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
     // 頂点バッファの生成
     ID3D12Resource* vertBuff = nullptr;
-    result = iDX->GetDevice()->CreateCommittedResource(
+    result = GetInstanceIDX()->GetDevice()->CreateCommittedResource(
         &heapProp, // ヒープ設定
         D3D12_HEAP_FLAG_NONE,
         &resDesc, // リソース設定
@@ -365,7 +363,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     result = D3D12SerializeRootSignature(&rootSignatureDesc, D3D_ROOT_SIGNATURE_VERSION_1_0,
                                          &rootSigBlob, &errorBlob);
     assert(SUCCEEDED(result));
-    result = iDX->GetDevice()->CreateRootSignature(0, rootSigBlob->GetBufferPointer(), rootSigBlob->GetBufferSize(),
+    result = GetInstanceIDX()->GetDevice()->CreateRootSignature(0, rootSigBlob->GetBufferPointer(), rootSigBlob->GetBufferSize(),
                                          IID_PPV_ARGS(&rootSignature));
     assert(SUCCEEDED(result));
     rootSigBlob->Release();
@@ -382,7 +380,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #pragma region パイプラインステートの生成
     // パイプランステートの生成
     ID3D12PipelineState* pipelineState = nullptr;
-    result = iDX->GetDevice()->CreateGraphicsPipelineState(&pipelineDesc, IID_PPV_ARGS(&pipelineState));
+    result = GetInstanceIDX()->GetDevice()->CreateGraphicsPipelineState(&pipelineDesc, IID_PPV_ARGS(&pipelineState));
     assert(SUCCEEDED(result));
 #pragma endregion
 
@@ -403,7 +401,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     // 定数バッファの生成準備
     ID3D12Resource* constBuffMaterial = nullptr;
     // 定数バッファの生成
-    result = iDX->GetDevice()->CreateCommittedResource(
+    result = GetInstanceIDX()->GetDevice()->CreateCommittedResource(
         &cbHeapProp,	// ヒープ設定
         D3D12_HEAP_FLAG_NONE,
         &cbResourceDesc,	// リソース設定
@@ -611,7 +609,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
     // テクスチャバッファの生成
     ID3D12Resource* texBuff = nullptr;
-    result = iDX->GetDevice()->CreateCommittedResource(
+    result = GetInstanceIDX()->GetDevice()->CreateCommittedResource(
         &textureHeapProp,
         D3D12_HEAP_FLAG_NONE,
         &textureResourceDesc,
@@ -622,7 +620,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
     // テクスチャバッファの生成2
     ID3D12Resource* texBuff2 = nullptr;
-    result = iDX->GetDevice()->CreateCommittedResource(
+    result = GetInstanceIDX()->GetDevice()->CreateCommittedResource(
         &textureHeapProp,
         D3D12_HEAP_FLAG_NONE,
         &textureResourceDesc2,
@@ -669,7 +667,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     //delete[] imageData;
 
     // SRVヒープの先頭ハンドルを取得
-    D3D12_CPU_DESCRIPTOR_HANDLE srvHandle = iDX->GetSRVHeap()->GetCPUDescriptorHandleForHeapStart();
+    D3D12_CPU_DESCRIPTOR_HANDLE srvHandle = GetInstanceIDX()->GetSRVHeap()->GetCPUDescriptorHandleForHeapStart();
 
     // シェーダリソースビュー設定
     D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
@@ -679,11 +677,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     srvDesc.Texture2D.MipLevels = textureResourceDesc.MipLevels;
 
     // ハンドルのさす位置にシェーダーリソースビューの作成
-    iDX->GetDevice()->CreateShaderResourceView(texBuff, &srvDesc, srvHandle);
+    GetInstanceIDX()->GetDevice()->CreateShaderResourceView(texBuff, &srvDesc, srvHandle);
 
 
     // 1つハンドルを進める
-    UINT incrementSize = iDX->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+    UINT incrementSize = GetInstanceIDX()->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
     srvHandle.ptr += incrementSize;
 
     // シェーダリソースビュー設定
@@ -694,7 +692,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     srvDesc2.Texture2D.MipLevels = textureResourceDesc2.MipLevels;
 
     // ハンドルの指す位置にシェーダーリソースビュー作成
-    iDX->GetDevice()->CreateShaderResourceView(texBuff2, &srvDesc2, srvHandle);
+    GetInstanceIDX()->GetDevice()->CreateShaderResourceView(texBuff2, &srvDesc2, srvHandle);
 #pragma endregion
 
 #pragma region キーボード入力設定
@@ -715,7 +713,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
     // インデックスバッファの生成
     ID3D12Resource* indexBuff = nullptr;
-    result = iDX->GetDevice()->CreateCommittedResource(
+    result = GetInstanceIDX()->GetDevice()->CreateCommittedResource(
         &heapProp,	// ヒープ設定
         D3D12_HEAP_FLAG_NONE,
         &resDesc,	// リソース設定
@@ -761,7 +759,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             vertMap[i] = vertices[i];//座標をコピー
         }
 
-        iDX->PreDraw();
+        GetInstanceIDX()->PreDraw();
 
 #pragma region キーボード情報の取得
         keyboard->Update();
@@ -852,30 +850,30 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #pragma endregion
 
         // パイプラインステートとルートシグネチャの設定コマンド
-        iDX->GetCommandList()->SetPipelineState(pipelineState);
-        iDX->GetCommandList()->SetGraphicsRootSignature(rootSignature);
+        GetInstanceIDX()->GetCommandList()->SetPipelineState(pipelineState);
+        GetInstanceIDX()->GetCommandList()->SetGraphicsRootSignature(rootSignature);
 
         // プリミティブ形状の設定コマンド
-        iDX->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST); // 三角形リスト
+        GetInstanceIDX()->GetCommandList()->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST); // 三角形リスト
 
         // 頂点バッファビューの設定コマンド
-        iDX->GetCommandList()->IASetVertexBuffers(0, 1, &vbView);
+        GetInstanceIDX()->GetCommandList()->IASetVertexBuffers(0, 1, &vbView);
 
         // インデックスバッファビューの設定コマンド
-        iDX->GetCommandList()->IASetIndexBuffer(&ibView);
+        GetInstanceIDX()->GetCommandList()->IASetIndexBuffer(&ibView);
 
 
-        iDX->GetCommandList()->SetGraphicsRootConstantBufferView(0, constBuffMaterial->GetGPUVirtualAddress());
+        GetInstanceIDX()->GetCommandList()->SetGraphicsRootConstantBufferView(0, constBuffMaterial->GetGPUVirtualAddress());
         // SRVヒープの設定コマンド
-        ID3D12DescriptorHeap* srvHeapHandle = iDX->GetSRVHeap();
-        iDX->GetCommandList()->SetDescriptorHeaps(1, &srvHeapHandle);
+        ID3D12DescriptorHeap* srvHeapHandle = GetInstanceIDX()->GetSRVHeap();
+        GetInstanceIDX()->GetCommandList()->SetDescriptorHeaps(1, &srvHeapHandle);
 
         // SRVヒープの先頭ハンドルを取得(SRVを指しているはず)
-        D3D12_GPU_DESCRIPTOR_HANDLE srvGpuHandle = iDX->GetSRVHeap()->GetGPUDescriptorHandleForHeapStart();
+        D3D12_GPU_DESCRIPTOR_HANDLE srvGpuHandle = GetInstanceIDX()->GetSRVHeap()->GetGPUDescriptorHandleForHeapStart();
         
         // 2枚目を指し示すようにしたSRVのハンドルをルートパラメータ1番に設定
         srvGpuHandle.ptr += incrementSize;
-        iDX->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvGpuHandle);
+        GetInstanceIDX()->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvGpuHandle);
 
         UINT _numIndecies = _countof(indices);
         // 全オブジェクトについて処理
@@ -903,7 +901,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 #pragma region 画面入れ替え
 
-        iDX->PostDraw();
+        GetInstanceIDX()->PostDraw();
 
 #pragma endregion
 

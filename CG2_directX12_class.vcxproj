@@ -141,6 +141,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="ConstBuffer.cpp" />
     <ClCompile Include="DebugCamera.cpp" />
     <ClCompile Include="Indispensable.cpp" />
     <ClCompile Include="InitDirectX.cpp" />
@@ -174,6 +175,7 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="ConstBuffer.h" />
     <ClInclude Include="DebugCamera.h" />
     <ClInclude Include="Indispensable.h" />
     <ClInclude Include="InitDirectX.h" />

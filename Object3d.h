@@ -24,7 +24,7 @@ private: // メンバ変数
     // エイリアステンプレート
     template<class T> using Comptr = Microsoft::WRL::ComPtr<T>;
 
-    InitDirectX* iDX = InitDirectX::GetInstance();
+    //InitDirectX* iDX = InitDirectX::GetInstance();
 
     // 定数バッファ（行列用）
     Comptr<ID3D12Resource> constBuffTransform;

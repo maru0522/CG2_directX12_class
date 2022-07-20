@@ -18,7 +18,7 @@ void Object3d::Initialize()
     resDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
 
     // 定数バッファの生成
-    result = InitDirectX::GetInstance()->GetDevice()->CreateCommittedResource(
+    result = GetInstanceIDX()->GetDevice()->CreateCommittedResource(
         &heapProp,
         D3D12_HEAP_FLAG_NONE,
         &resDesc,
@@ -66,12 +66,12 @@ void Object3d::Update(const XMMATRIX& _matView, const XMMATRIX& _matProjection)
 void Object3d::Draw(D3D12_VERTEX_BUFFER_VIEW& _vbView, D3D12_INDEX_BUFFER_VIEW& _ibView, UINT& _numIndices)
 {
     // 頂点バッファの設定
-    iDX->GetCommandList()->IASetVertexBuffers(0, 1, &_vbView);
+    GetInstanceIDX()->GetCommandList()->IASetVertexBuffers(0, 1, &_vbView);
     // インデックスバッファの設定
-    iDX->GetCommandList()->IASetIndexBuffer(&_ibView);
+    GetInstanceIDX()->GetCommandList()->IASetIndexBuffer(&_ibView);
     // 定数バッファビュー（CBV）の設定コマンド
-    iDX->GetCommandList()->SetGraphicsRootConstantBufferView(2, constBuffTransform->GetGPUVirtualAddress());
+    GetInstanceIDX()->GetCommandList()->SetGraphicsRootConstantBufferView(2, constBuffTransform->GetGPUVirtualAddress());
 
     // 描画コマンドリスト
-    iDX->GetCommandList()->DrawIndexedInstanced(_numIndices, 1, 0, 0, 0);
+    GetInstanceIDX()->GetCommandList()->DrawIndexedInstanced(_numIndices, 1, 0, 0, 0);
 }
