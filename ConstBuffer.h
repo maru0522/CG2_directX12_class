@@ -10,6 +10,7 @@ template <typename CBType> class ConstBuffer
 public: // メンバ変数
 public: // メンバ関数
     void Create();
+    void Delete();
 
 private: // メンバ変数
     // エイリアステンプレート

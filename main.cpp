@@ -415,21 +415,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     // 値を書き込むと自動的に転送される
     constMapMaterial->color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);		// RGBAで半透明の赤
 
-#pragma region 構造化に伴いコメントアウト
-    //// 定数バッファの生成準備0番（3D変換行列）
-    //ID3D12Resource* constBuffTransform0 = nullptr;
-    //ConstBufferDataTransform* constMapTransform0 = nullptr;
-    //// 定数バッファの生成準備1番（3D変換行列）
-    //ID3D12Resource* constBuffTransform1 = nullptr;
-    //ConstBufferDataTransform* constMapTransform1 = nullptr;
-
-
-    //float angle = 0.0f;		// カメラの回転角
-    //XMFLOAT3 position = { 0.0f,0.0f,0.0f };
-    //XMFLOAT3 rotate = { 0.0f,0.0f,0.0f };
-    //XMFLOAT3 scale = { 1.0f,1.0f,1.0f };
-#pragma endregion 
-
     // 3Dオブジェクトの数
     const size_t kObjectCount = 50;
     // 3Dオブジェクトの配列
@@ -458,59 +443,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     // ビュー変換行列（グローバル変数）
     DebugCamera devCamera;
     devCamera.InitializeDef();
-
-#pragma region 構造化に伴いコメントアウト
-    //{
-    //    // 定数バッファの生成（設定）
-    //    // ヒープ設定
-    //    D3D12_HEAP_PROPERTIES cbHeapProp{};
-    //    cbHeapProp.Type = D3D12_HEAP_TYPE_UPLOAD;					// GPUへの転送
-    //    // リソース設定
-    //    D3D12_RESOURCE_DESC cbResourceDesc{};
-    //    cbResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-    //    cbResourceDesc.Width = (sizeof(ConstBufferDataTransform) + 0xff) & ~0xff;	// 256バイトアラインメント
-    //    cbResourceDesc.Height = 1;
-    //    cbResourceDesc.DepthOrArraySize = 1;
-    //    cbResourceDesc.MipLevels = 1;
-    //    cbResourceDesc.SampleDesc.Count = 1;
-    //    cbResourceDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-    //    // 定数バッファの生成0番
-    //    result = device->CreateCommittedResource(
-    //        &cbHeapProp,	// ヒープ設定
-    //        D3D12_HEAP_FLAG_NONE,
-    //        &cbResourceDesc,	// リソース設定
-    //        D3D12_RESOURCE_STATE_GENERIC_READ,
-    //        nullptr,
-    //        IID_PPV_ARGS(&constBuffTransform0)
-    //    );
-    //    assert(SUCCEEDED(result));
-
-    //    // 定数バッファのマッピング0番
-    //    result = constBuffTransform0->Map(0, nullptr, (void**)&constMapTransform0);	// マッピング
-    //    assert(SUCCEEDED(result));
-
-    //    // 単位行列を代入
-    //    constMapTransform0->mat = XMMatrixIdentity();
-
-
-    //    // 定数バッファの生成1番
-    //    result = device->CreateCommittedResource(
-    //        &cbHeapProp,	// ヒープ設定
-    //        D3D12_HEAP_FLAG_NONE,
-    //        &cbResourceDesc,	// リソース設定
-    //        D3D12_RESOURCE_STATE_GENERIC_READ,
-    //        nullptr,
-    //        IID_PPV_ARGS(&constBuffTransform1)
-    //    );
-    //    assert(SUCCEEDED(result));
-    //    // 定数バッファのマッピング1番
-    //    result = constBuffTransform1->Map(0, nullptr, (void**)&constMapTransform1);	// マッピング
-    //    assert(SUCCEEDED(result));
-
-    //    // 単位行列を代入
-    //    constMapTransform1->mat = XMMatrixIdentity();
-    //}
-#pragma endregion
 
 #pragma region テクスチャマッピング
     //// 横方向ピクセル数

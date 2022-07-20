@@ -148,6 +148,9 @@
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Object3d.cpp" />
+    <ClCompile Include="RootSignature.cpp" />
+    <ClCompile Include="Sprite.cpp" />
+    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Vector2.cpp" />
     <ClCompile Include="Vector3.cpp" />
     <ClCompile Include="Window.cpp" />
@@ -181,6 +184,9 @@
     <ClInclude Include="InitDirectX.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Object3d.h" />
+    <ClInclude Include="RootSignature.h" />
+    <ClInclude Include="Sprite.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="Vector2.h" />
     <ClInclude Include="Vector3.h" />
     <ClInclude Include="Window.h" />

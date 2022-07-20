@@ -30,7 +30,7 @@ private: // ƒƒ“ƒo•Ï”
     Comptr<ID3D12GraphicsCommandList> commandList = nullptr;
     Comptr<ID3D12CommandQueue> commandQueue = nullptr;
     Comptr<IDXGISwapChain4> swapChain = nullptr;
-    Comptr<ID3D12DescriptorHeap> srvHeap = nullptr;
+
     Comptr<ID3D12DescriptorHeap> rtvHeap = nullptr;
     std::vector<Comptr<ID3D12Resource>> backBuffers;
     Comptr<ID3D12Resource> depthBuff = nullptr;
