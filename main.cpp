@@ -170,6 +170,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     // 頂点1つ分のデータサイズ
     vbView.StrideInBytes = sizeof(vertices[0]);
 
+#pragma region GraphicsPipelineクラス化
 #pragma region 頂点シェーダー
     ID3DBlob* vsBlob = nullptr; // 頂点シェーダオブジェクト
     ID3DBlob* psBlob = nullptr; // ピクセルシェーダオブジェクト
@@ -306,7 +307,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     pipelineDesc.NumRenderTargets = 1; // 描画対象は1つ
     pipelineDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB; // 0~255指定のRGBA
     pipelineDesc.SampleDesc.Count = 1; // 1ピクセルにつき1回サンプリング
+#pragma endregion
 
+#pragma region RootSignatureクラス化
     // デスクリプタレンジの設定
     D3D12_DESCRIPTOR_RANGE descriptorRange{};
     descriptorRange.NumDescriptors = 1;
@@ -364,6 +367,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
                                          IID_PPV_ARGS(&rootSignature));
     assert(SUCCEEDED(result));
     rootSigBlob->Release();
+#pragma endregion
     // パイプラインにルートシグネチャをセット
     pipelineDesc.pRootSignature = rootSignature;
 
@@ -372,13 +376,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     pipelineDesc.DepthStencilState.DepthWriteMask = D3D12_DEPTH_WRITE_MASK_ALL;     // 書き込み許可
     pipelineDesc.DepthStencilState.DepthFunc = D3D12_COMPARISON_FUNC_LESS;          // 小さければ合格
     pipelineDesc.DSVFormat = DXGI_FORMAT_D32_FLOAT;                                 // 深度値フォーマット
-#pragma endregion
 
 #pragma region パイプラインステートの生成
     // パイプランステートの生成
     ID3D12PipelineState* pipelineState = nullptr;
     result = GetInstanceIDX()->GetDevice()->CreateGraphicsPipelineState(&pipelineDesc, IID_PPV_ARGS(&pipelineState));
     assert(SUCCEEDED(result));
+#pragma endregion
 #pragma endregion
 
     // 定数バッファ生成用の設定
