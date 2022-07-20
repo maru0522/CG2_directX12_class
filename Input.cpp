@@ -1,11 +1,5 @@
 #include "Input.h"
 
-Input::Keyboard* Input::Keyboard::GetInstance()
-{
-    static Keyboard instance;
-    return &instance;
-}
-
 void Input::Keyboard::Initialize()
 {
     // DirectInput‚Ì‰Šú‰»
@@ -44,17 +38,8 @@ void Input::Keyboard::Update()
     keyboard->GetDeviceState(static_cast<DWORD>(size(keys)),keys.data());
 }
 
-bool Input::Keyboard::isTrigger(UINT8 key)
+static Input::Keyboard _keyboard;
+Input::Keyboard* Input::GetInstanceKeys()
 {
-    return !preKeys[key] && keys[key];
-}
-
-bool Input::Keyboard::isDown(UINT8 key)
-{
-    return keys[key];
-}
-
-bool Input::Keyboard::isReleased(UINT8 key)
-{
-    return preKeys[key] && !keys[key];
+    return &_keyboard;
 }

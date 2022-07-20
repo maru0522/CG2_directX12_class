@@ -32,9 +32,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #pragma region DirectInput初期化
    
     // キーボード入力の初期化
-    Input::Keyboard* keyboard = nullptr;
-    keyboard = Input::Keyboard::GetInstance();
-    keyboard->Initialize();
+    using namespace Input;
+    GetInstanceKeys()->Initialize();
 
 #pragma endregion
 
@@ -760,7 +759,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         GetInstanceIDX()->PreDraw();
 
 #pragma region キーボード情報の取得
-        keyboard->Update();
+        GetInstanceKeys()->Update();
 #pragma endregion
 
         devCamera.Update();

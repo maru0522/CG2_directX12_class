@@ -11,17 +11,16 @@ namespace Input
 {
     class Keyboard
     {
-    public: // 静的なメンバ関数
-        // シングルトンインスタンスの取得
-        static Keyboard* GetInstance();
-
     public: // メンバ関数
         void Initialize();  
         void Update();
 
-        bool isTrigger(UINT8 key);  // 押した瞬間
-        bool isDown(UINT8 key);     // 押されているとき
-        bool isReleased(UINT8 key); // 離された瞬間
+        // 押した瞬間
+        bool isTrigger(UINT8 key) { return !preKeys[key] && keys[key]; }
+        // 押されているとき
+        bool isDown(UINT8 key) { return keys[key]; }
+        // 離された瞬間
+        bool isReleased(UINT8 key) { return preKeys[key] && !keys[key]; }
 
     private: // メンバ変数
         // エイリアステンプレート
@@ -31,12 +30,8 @@ namespace Input
         Comptr<IDirectInputDevice8> keyboard = nullptr;
         std::array<BYTE, 256> preKeys;
         std::array<BYTE, 256> keys;
-
-    private: // メンバ関数
-        Keyboard() = default;
-        ~Keyboard() = default;
-        Keyboard(const Keyboard&) = delete;
-        const Keyboard& operator=(const Keyboard&) = delete;
     };
+
+    Keyboard* GetInstanceKeys();
 };
 
