@@ -3,10 +3,6 @@
 
 class InitDirectX
 {
-public: // 静的なメンバ関数
-
-public: // メンバ変数
-
 public: // メンバ関数
     void Initialize(); // DirectX初期化処理
 
@@ -63,4 +59,5 @@ private: // メンバ関数
     void Fence();
 };
 
+// インスタンスを取得
 InitDirectX* GetInstanceIDX();

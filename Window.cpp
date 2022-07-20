@@ -24,12 +24,6 @@ namespace {
     }
 }
 
-Window* Window::GetInstance()
-{
-    static Window instance;
-    return &instance;
-}
-
 const wchar_t Window::windowClassName[] = L"mEngine";
 
 void Window::CreateObj()
@@ -123,3 +117,8 @@ bool Window::IsKeep()
     return msg.message != WM_QUIT;
 }
 
+static Window window;
+Window* GetInstanceWnd()
+{
+    return &window;
+}

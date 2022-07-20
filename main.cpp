@@ -17,9 +17,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #pragma region WindowsAPI初期化
 
     // ウィンドウの作成
-    Window* window = nullptr;
-    window = Window::GetInstance();
-    window->CreateObj("MyEngine");
+    GetInstanceWnd()->CreateObj("MyEngine");
 
 #pragma endregion
 
@@ -745,7 +743,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 #pragma region ウィンドウメッセージ処理
 
-        if (!window->IsKeep()) {
+        if (!GetInstanceWnd()->IsKeep()) {
             break;
         }
 
@@ -907,7 +905,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
     }
 
-    window->DeleteObj();
+    GetInstanceWnd()->DeleteObj();
 
     return 0;
 }

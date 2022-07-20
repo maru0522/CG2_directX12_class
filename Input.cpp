@@ -8,11 +8,9 @@ Input::Keyboard* Input::Keyboard::GetInstance()
 
 void Input::Keyboard::Initialize()
 {
-    Window* window = Window::GetInstance();
-
     // DirectInputの初期化
     HRESULT result = DirectInput8Create(
-        window->GetHInstance(), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&directInput, nullptr);
+        GetInstanceWnd()->GetHInstance(), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&directInput, nullptr);
     assert(SUCCEEDED(result));
 
     // キーボードデバイスの生成
@@ -25,7 +23,7 @@ void Input::Keyboard::Initialize()
 
     // 排他制御レベルのセット
     result = keyboard->SetCooperativeLevel(
-        window->GetHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
+        GetInstanceWnd()->GetHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
     assert(SUCCEEDED(result));
 }
 

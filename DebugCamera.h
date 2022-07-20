@@ -4,8 +4,6 @@
 
 class DebugCamera
 {
-public: // メンバ変数
-    
 public: // メンバ関数
 #pragma region ビュー行列初期化用
     void SetCamEye(const float x, const float y, const float z) { eye = { x, y, z }; }
@@ -15,7 +13,7 @@ public: // メンバ関数
 
 #pragma region 射影行列初期化用
     void SetFovAngleY(float degree) { fovAngleY = XMConvertToRadians(degree); }
-    void SetAspectRatioDef() { aspectRatio = static_cast<float>(window->width / window->height); }
+    void SetAspectRatioDef() { aspectRatio = static_cast<float>(GetInstanceWnd()->width / GetInstanceWnd()->height); }
     void SetNearZ(float _nearZ) { nearZ = _nearZ; }
     void SetFarZ(float _farZ) { farZ = _farZ; }
 #pragma endregion
@@ -30,8 +28,6 @@ public: // メンバ関数
     void Update();
 
 private: // メンバ変数
-    Window* window = Window::GetInstance();
-
     XMMATRIX matView;
     XMMATRIX matProjection;
 
@@ -47,7 +43,5 @@ private: // メンバ変数
     float nearZ;
     float farZ;
 #pragma endregion
-
-private: // メンバ関数
 };
 

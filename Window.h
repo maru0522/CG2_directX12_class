@@ -11,10 +11,6 @@ public: // 静的メンバ変数
 	// ウィンドウクラス名
 	static const wchar_t windowClassName[];
 
-public: // 静的メンバ関数
-	// シングルトンインスタンスの取得
-	static Window* GetInstance();
-
 public: // メンバ関数
 	// Windowクラスの設定
 	void CreateObj();
@@ -31,17 +27,12 @@ public: // メンバ関数
 
 	HINSTANCE GetHInstance() const { return w.hInstance; }
 
-
 private: // メンバ変数
 	// ウィンドウクラスの設定
 	WNDCLASSEX w{};
 	// ウィンドウハンドルの生成
 	HWND hwnd;
-
-private: // メンバ関数
-	// シングルトン
-	Window() = default;
-	~Window() = default;
-	Window(const Window&) = delete;
-	const Window& operator=(const Window&) = delete;
 };
+
+// インスタンスを取得
+Window* GetInstanceWnd();

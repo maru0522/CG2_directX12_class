@@ -14,8 +14,6 @@ void InitDirectX::Initialize()
 
 void InitDirectX::PreDraw()
 {
-    Window* window = Window::GetInstance(); // Windowクラスのインスタンスを取得
-
 #pragma region リソースバリアの変更
     // バックバッファの番号を取得（2つなので0番か1番）
     UINT bbIndex = swapChain->GetCurrentBackBufferIndex();
@@ -49,8 +47,8 @@ void InitDirectX::PreDraw()
     // ４．描画コマンドここから
     // ビューポート設定コマンド
     D3D12_VIEWPORT viewport{};
-    viewport.Width = window->width;
-    viewport.Height = window->height;
+    viewport.Width = GetInstanceWnd()->width;
+    viewport.Height = GetInstanceWnd()->height;
     viewport.TopLeftX = 0;
     viewport.TopLeftY = 0;
     viewport.MinDepth = 0.0f;
@@ -61,9 +59,9 @@ void InitDirectX::PreDraw()
     // シザー矩形
     D3D12_RECT scissorRect{};
     scissorRect.left = 0; // 切り抜き座標左
-    scissorRect.right = scissorRect.left + window->width; // 切り抜き座標右
+    scissorRect.right = scissorRect.left + GetInstanceWnd()->width; // 切り抜き座標右
     scissorRect.top = 0; // 切り抜き座標上
-    scissorRect.bottom = scissorRect.top + window->height; // 切り抜き座標下
+    scissorRect.bottom = scissorRect.top + GetInstanceWnd()->height; // 切り抜き座標下
     // シザー矩形設定コマンドを、コマンドリストに積む
     commandList->RSSetScissorRects(1, &scissorRect);
 #pragma endregion
@@ -98,8 +96,11 @@ void InitDirectX::PostDraw()
     if (fence->GetCompletedValue() != fenceVal) {
         HANDLE event = CreateEvent(nullptr, false, false, nullptr);
         fence->SetEventOnCompletion(fenceVal, event);
-        WaitForSingleObject(event, INFINITE);
-        CloseHandle(event);
+        // "警告: eventは'0'である可能性があります。"を消すためのもの。要否を問う。
+        if (event != 0) {
+            WaitForSingleObject(event, INFINITE);
+            CloseHandle(event);
+        }
     }
     // キューをクリア
     result = cmdAllocator->Reset();
@@ -233,13 +234,11 @@ void InitDirectX::SwapChain()
 {
     HRESULT result = S_FALSE;
 
-    Window* window = Window::GetInstance(); // Windowクラスのインスタンスを取得
-
 #pragma region スワップチェーンの生成
     // スワップチェーンの設定
     DXGI_SWAP_CHAIN_DESC1 swapChainDesc{};
-    swapChainDesc.Width = window->width;
-    swapChainDesc.Height = window->height;
+    swapChainDesc.Width = GetInstanceWnd()->width;
+    swapChainDesc.Height = GetInstanceWnd()->height;
     swapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM; // 色情報の書式
     swapChainDesc.SampleDesc.Count = 1; // マルチサンプルしない
     swapChainDesc.BufferUsage = DXGI_USAGE_BACK_BUFFER; // バックバッファ用
@@ -251,7 +250,7 @@ void InitDirectX::SwapChain()
     Comptr<IDXGISwapChain1> swapChain1;
     // スワップチェーンの生成
     result = dxgiFactory->CreateSwapChainForHwnd(
-        commandQueue.Get(), window->GetHwnd(), &swapChainDesc, nullptr, nullptr,
+        commandQueue.Get(), GetInstanceWnd()->GetHwnd(), &swapChainDesc, nullptr, nullptr,
         (IDXGISwapChain1**)&swapChain1);
 
     //生成したIDXGISwaoChain1のオブジェクトをIDXGISwapChain4に変換する
@@ -320,14 +319,12 @@ void InitDirectX::DepthBuffer()
 {
     HRESULT result = S_FALSE;
 
-    Window* window = Window::GetInstance(); // Windowクラスのインスタンスを取得
-
 #pragma region 深度テスト深度バッファ
     // リソース設定
     D3D12_RESOURCE_DESC depthResourceDesc{};
     depthResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
-    depthResourceDesc.Width = window->width;     // レンダーターゲットに合わせる
-    depthResourceDesc.Height = window->height;   // レンダーターゲットに合わせる
+    depthResourceDesc.Width = GetInstanceWnd()->width;     // レンダーターゲットに合わせる
+    depthResourceDesc.Height = GetInstanceWnd()->height;   // レンダーターゲットに合わせる
     depthResourceDesc.DepthOrArraySize = 1;
     depthResourceDesc.Format = DXGI_FORMAT_D32_FLOAT;   // 深度値フォーマット
     depthResourceDesc.SampleDesc.Count = 1;
@@ -376,7 +373,6 @@ void InitDirectX::Fence()
 }
 
 static InitDirectX iDX;
-
 InitDirectX* GetInstanceIDX()
 {
     return &iDX;
