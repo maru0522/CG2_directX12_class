@@ -1,5 +1,5 @@
 #pragma once
-#include "Essentials.h"
+#include "Indispensable.h"
 #include "InitDirectX.h"
 
 class Object3d

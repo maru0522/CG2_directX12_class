@@ -1,6 +1,6 @@
 #pragma once
 #define DIRECTINPUT_VERSION 0x0800
-#include "Essentials.h"
+#include "Indispensable.h"
 #include "Window.h"
 #include <dinput.h>
 #include <array>

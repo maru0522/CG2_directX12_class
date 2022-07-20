@@ -142,7 +142,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="DebugCamera.cpp" />
-    <ClCompile Include="Essentials.cpp" />
+    <ClCompile Include="Indispensable.cpp" />
     <ClCompile Include="InitDirectX.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="main.cpp" />
@@ -175,7 +175,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DebugCamera.h" />
-    <ClInclude Include="Essentials.h" />
+    <ClInclude Include="Indispensable.h" />
     <ClInclude Include="InitDirectX.h" />
     <ClInclude Include="Input.h" />
     <ClInclude Include="Object3d.h" />
