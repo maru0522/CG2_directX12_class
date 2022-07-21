@@ -6,6 +6,7 @@ class RootSignature
 public:
 public:
     void Initialize();
+    ID3D12RootSignature* GetRootSignature() { return rootSignature.Get(); }
 
 private:
     // エイリアステンプレート

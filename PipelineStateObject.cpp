@@ -1,5 +1,6 @@
 #include "PipelineStateObject.h"
 #include "InitDirectX.h"
+#include "RootSignature.h"
 
 namespace {
     // ワイド文字に変換
@@ -157,7 +158,7 @@ void PipelineStateObject::Initialize(std::string _vertShader, std::string _pixel
     pipelineDesc.SampleDesc.Count = 1; // 1ピクセルにつき1回サンプリング
 
     // パイプラインにルートシグネチャをセット
-    pipelineDesc.pRootSignature = rootSignature;
+    pipelineDesc.pRootSignature = GetInstanceRS()->GetRootSignature();
 
     // デプスステンシルステートの設定
     pipelineDesc.DepthStencilState.DepthEnable = true;  // 深度テストを行う
