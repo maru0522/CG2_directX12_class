@@ -5,20 +5,17 @@ class Texture
 {
 public:
 public:
-    void ClearImgData(XMFLOAT4* _imgData);
-    void CreateTexBuff();
-    void CreateSrvHeapDesc();
-    void CreateSrv();
+    void LoadWICTex(std::string path);
 
 private:
     // エイリアステンプレート
     template<class T> using Comptr = Microsoft::WRL::ComPtr<T>;
-    const size_t texWidth = 256;
-    const size_t texHeight = 256;
-    const size_t imgDataCount = texWidth * texHeight;
+
+    // 画像イメージデータ配列
+    TexMetadata metadata{}; // 画像のサイズ等、テクスチャとしての各種情報が入る
+    ScratchImage scratchImg{}; // ビットマップ形式での画像データそのもののアドレスが入る
 
     Comptr<ID3D12Resource> texBuff = nullptr;
-    D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc = {};
     Comptr<ID3D12DescriptorHeap> srvHeap = nullptr;
 
 private:

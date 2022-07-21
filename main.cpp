@@ -38,6 +38,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #pragma endregion
 
 #pragma region 描画初期化処理
+#pragma region Modelクラス化
 
     // 頂点データ構造体
     struct Vertex
@@ -169,6 +170,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     vbView.SizeInBytes = sizeVB;
     // 頂点1つ分のデータサイズ
     vbView.StrideInBytes = sizeof(vertices[0]);
+#pragma endregion
 
 #pragma region GraphicsPipelineクラス化
 #pragma region 頂点シェーダー
@@ -385,6 +387,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #pragma endregion
 #pragma endregion
 
+#pragma region CBテンプレートクラス化
     // 定数バッファ生成用の設定
     // ヒープ設定
     D3D12_HEAP_PROPERTIES cbHeapProp{};
@@ -415,7 +418,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     ConstBufferDataMaterial* constMapMaterial = nullptr;
     result = constBuffMaterial->Map(0, nullptr, (void**)&constMapMaterial);		// マッピング
     assert(SUCCEEDED(result));
+#pragma endregion
 
+    // CBTempクラス内に宣言しているため後々修正するべき
     // 値を書き込むと自動的に転送される
     constMapMaterial->color = XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);		// RGBAで半透明の赤
 
@@ -448,7 +453,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     DebugCamera devCamera;
     devCamera.InitializeDef();
 
-#pragma region テクスチャマッピング
+
+#pragma region テクスチャクラス化
     //// 横方向ピクセル数
     //const size_t textureWidth = 256;
     //// 縦方向ピクセル数
@@ -632,6 +638,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     // Inputクラス作成に伴いメンバへ移動したため削除
 #pragma endregion
 
+#pragma region Modelクラス化
     // インデックスデータ全体のサイズ
     UINT sizeIB = static_cast<UINT>(sizeof(uint16_t) * _countof(indices));
 
@@ -669,7 +676,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     ibView.BufferLocation = indexBuff->GetGPUVirtualAddress();
     ibView.Format = DXGI_FORMAT_R16_UINT;
     ibView.SizeInBytes = sizeIB;
-
+#pragma endregion
 #pragma endregion
 
 

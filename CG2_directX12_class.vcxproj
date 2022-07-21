@@ -143,6 +143,7 @@
   <ItemGroup>
     <ClCompile Include="ConstBuffer.cpp" />
     <ClCompile Include="DebugCamera.cpp" />
+    <ClCompile Include="Model.cpp" />
     <ClCompile Include="PipelineStateObject.cpp" />
     <ClCompile Include="Indispensable.cpp" />
     <ClCompile Include="InitDirectX.cpp" />
@@ -181,6 +182,7 @@
   <ItemGroup>
     <ClInclude Include="ConstBuffer.h" />
     <ClInclude Include="DebugCamera.h" />
+    <ClInclude Include="Model.h" />
     <ClInclude Include="PipelineStateObject.h" />
     <ClInclude Include="Indispensable.h" />
     <ClInclude Include="InitDirectX.h" />

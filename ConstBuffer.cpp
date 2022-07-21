@@ -29,11 +29,13 @@ template<typename CBType> void ConstBuffer<CBType>::Create()
     assert(SUCCEEDED(result));
 
     // 定数バッファのマッピング
-    result = constBuff->Map(0, nullptr, (void**)&CBType);
+    CBType* cbTypeMap = nullptr;
+    result = constBuff->Map(0, nullptr, (void**)&cbTypeMap);
     assert(SUCCEEDED(result));
 }
 
 template<typename CBType> void ConstBuffer<CBType>::Delete()
 {
+    // マッピング解除
     ConstBuff->Unmap(0, nullptr);
 }
