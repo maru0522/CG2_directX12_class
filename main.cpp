@@ -467,6 +467,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     Vertex* vertMap = nullptr;
     result = vertBuff->Map(0, nullptr, (void**)&vertMap);
     assert(SUCCEEDED(result));
+    for (int i = 0; i < _countof(vertices); i++) {
+        vertMap[i] = vertices[i];//座標をコピー
+    }
     // 繋がりを解除
     vertBuff->Unmap(0, nullptr);
 
@@ -1077,10 +1080,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #pragma region DirextX毎フレーム処理
         // DirectX毎フレーム処理　ここから
 
-        //全頂点に対して
-        for (int i = 0; i < _countof(vertices); i++) {
-            vertMap[i] = vertices[i];//座標をコピー
-        }
 #pragma region リソースバリアの変更
         // バックバッファの番号を取得（2つなので0番か1番）
         UINT bbIndex = swapChain->GetCurrentBackBufferIndex();
