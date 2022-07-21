@@ -6,11 +6,12 @@
 #include "Object3d.h"
 #include<math.h>
 
-
+#pragma region Modelクラス化
 // 定数バッファ用データ構造体（マテリアル）
 struct ConstBufferDataMaterial {
     XMFLOAT4 color;		// 色（RGBA）
 };
+#pragma endregion
 
 // Windowsアプリでのエントリーポイント(main関数)
 int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
@@ -693,12 +694,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 #pragma region DirextX毎フレーム処理
         // DirectX毎フレーム処理　ここから
-
-        //全頂点に対して
-        for (int i = 0; i < _countof(vertices); i++) {
-            vertMap[i] = vertices[i];//座標をコピー
-        }
-
         GetInstanceIDX()->PreDraw();
 
 #pragma region キーボード情報の取得
