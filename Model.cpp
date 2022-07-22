@@ -62,6 +62,8 @@ void Model::Initialize()
             22,21,23,   //三角形12つ目
     };
 
+    numIndecies = _countof(indices);
+
     for (int i = 0; i < _countof(indices) / 3; i++) {
         // 三角形1つごとに計算していく
         // 三角形のインデックスを取り出して、一時的な変数に入れる
@@ -84,6 +86,7 @@ void Model::Initialize()
         XMStoreFloat3(&vertices[indexOne].normal, normal);
         XMStoreFloat3(&vertices[indexTwo].normal, normal);
     }
+
 
     // 頂点データ全体のサイズ = 頂点データ一つ分のサイズ * 頂点データの要素数
     UINT sizeVB = static_cast<UINT>(sizeof(vertices[0]) * _countof(vertices));
@@ -132,7 +135,7 @@ void Model::Initialize()
 
 
     // インデックスデータ全体のサイズ
-    UINT sizeIB = static_cast<UINT>(sizeof(uint16_t) * _countof(indices));
+    UINT sizeIB = static_cast<UINT>(sizeof(uint16_t) * numIndecies);
 
     // リソース設定
     resDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
@@ -156,7 +159,7 @@ void Model::Initialize()
     uint16_t* indexMap = nullptr;
     result = indexBuff->Map(0, nullptr, (void**)&indexMap);
     // 全インデックスに対して
-    for (int i = 0; i < _countof(indices); i++) {
+    for (int i = 0; i < numIndecies; i++) {
         indexMap[i] = indices[i];	// インデックスをコピー
     }
     // マッピング解除

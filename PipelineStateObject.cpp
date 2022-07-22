@@ -157,6 +157,9 @@ void PipelineStateObject::Initialize(std::string _vertShader, std::string _pixel
     pipelineDesc.RTVFormats[0] = DXGI_FORMAT_R8G8B8A8_UNORM_SRGB; // 0~255指定のRGBA
     pipelineDesc.SampleDesc.Count = 1; // 1ピクセルにつき1回サンプリング
 
+    // ルートシグネチャを初期化
+    GetInstanceRS()->Initialize();
+
     // パイプラインにルートシグネチャをセット
     pipelineDesc.pRootSignature = GetInstanceRS()->GetRootSignature();
 
@@ -169,4 +172,10 @@ void PipelineStateObject::Initialize(std::string _vertShader, std::string _pixel
     // パイプランステートの生成
     result = GetInstanceIDX()->GetDevice()->CreateGraphicsPipelineState(&pipelineDesc, IID_PPV_ARGS(&pipelineState));
     assert(SUCCEEDED(result));
+}
+
+PipelineStateObject pipelineStateObject;
+PipelineStateObject* GetInstancePSO()
+{
+    return &pipelineStateObject;
 }

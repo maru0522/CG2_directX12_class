@@ -48,6 +48,9 @@ void RootSignature::Initialize()
     samplerDesc.ComparisonFunc = D3D12_COMPARISON_FUNC_NEVER;
     samplerDesc.ShaderVisibility = D3D12_SHADER_VISIBILITY_PIXEL;//ピクセルシェーダからのみ使用可能
 
+    rootSignatureDesc.pStaticSamplers = &samplerDesc;
+    rootSignatureDesc.NumStaticSamplers = 1;
+
     // ルートシグネチャのシリアライズ
     Comptr<ID3D10Blob> rootSigBlob = nullptr;
     Comptr<ID3DBlob> errorBlob = nullptr; // エラーオブジェクト

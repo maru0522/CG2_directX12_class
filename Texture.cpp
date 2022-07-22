@@ -86,10 +86,10 @@ void Texture::LoadWICTex(std::string path)
 	}
 
 	// SRVヒープの先頭ハンドルを取得
-	D3D12_CPU_DESCRIPTOR_HANDLE srvHandle = srvHeap->GetCPUDescriptorHandleForHeapStart();
+	D3D12_CPU_DESCRIPTOR_HANDLE srvHandle = GetInstanceIDX()->GetSrvHeap()->GetCPUDescriptorHandleForHeapStart();
 
 	// ハンドルのどこから生成できるかを確認する
-	UINT incrementSize = GetInstanceIDX()->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+	incrementSize = GetInstanceIDX()->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 	// 生成してあるなら進める。（生成してないなら値には0が入るので進めない）
 	srvHandle.ptr += incrementSize;
 

@@ -3,16 +3,14 @@
 
 class RootSignature
 {
-public:
-public:
+public: // メンバ関数
     void Initialize();
     ID3D12RootSignature* GetRootSignature() { return rootSignature.Get(); }
 
-private:
+private: // メンバ変数
     // エイリアステンプレート
     template<class T> using Comptr = Microsoft::WRL::ComPtr<T>;
     Comptr<ID3D12RootSignature> rootSignature;
-private:
 };
 
 RootSignature* GetInstanceRS();

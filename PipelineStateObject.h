@@ -22,12 +22,13 @@ static D3D12_INPUT_ELEMENT_DESC inputLayout[] = {
 
 class PipelineStateObject
 {
-public:
-public:
+public: // メンバ関数
     void LoadVertShader(std::string _vertShader);
     void LoadPixelShader(std::string _pixelShader);
     void Initialize(std::string _vertShader, std::string _pixelShader);
-private:
+
+    ID3D12PipelineState* GetPipelineState() { return pipelineState.Get(); }
+private: // メンバ変数
     // エイリアステンプレート
     template<class T> using Comptr = Microsoft::WRL::ComPtr<T>;
     Comptr<ID3DBlob> vsBlob = nullptr; // 頂点シェーダオブジェクト
@@ -35,6 +36,7 @@ private:
 
     // パイプランステートの生成
     Comptr<ID3D12PipelineState> pipelineState = nullptr;
-private:
 };
+
+PipelineStateObject* GetInstancePSO();
 

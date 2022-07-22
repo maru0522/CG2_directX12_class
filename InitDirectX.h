@@ -10,6 +10,8 @@ public: // メンバ関数
 
     void PostDraw(); // 描画後処理
 
+    void ReadyAgainCmd();
+
     void ClearRTV(); // RTVのクリア
 
     void ClearDepthBuffer(); // 深度バッファのクリア
@@ -18,7 +20,7 @@ public: // メンバ関数
 
     ID3D12GraphicsCommandList* GetCommandList() { return commandList.Get(); } // privateメンバ変数: commandList を取得
 
-    ID3D12DescriptorHeap* GetSRVHeap() { return srvHeap.Get(); } // privateメンバ変数: srvHeap を取得
+    ID3D12DescriptorHeap* GetSrvHeap() { return srvHeap.Get(); } // privateメンバ変数: srvHeap を取得
 
 private: // メンバ変数
     // エイリアステンプレート
@@ -30,7 +32,7 @@ private: // メンバ変数
     Comptr<ID3D12GraphicsCommandList> commandList = nullptr;
     Comptr<ID3D12CommandQueue> commandQueue = nullptr;
     Comptr<IDXGISwapChain4> swapChain = nullptr;
-
+    Comptr<ID3D12DescriptorHeap> srvHeap = nullptr;
     Comptr<ID3D12DescriptorHeap> rtvHeap = nullptr;
     std::vector<Comptr<ID3D12Resource>> backBuffers;
     Comptr<ID3D12Resource> depthBuff = nullptr;
@@ -43,20 +45,19 @@ private: // メンバ変数
 
 private: // メンバ関数
 
-    // デバイスの生成
-    void DXGIDevice();
-    // コマンドアロケータ/リスト/キューの生成
-    void Command();
-    // スワップチェーンの生成
-    void SwapChain();
-    // SRVDescHeapの生成
-    void SRVDescHeap();
-    // RTVDescHeapの生成
-    void RTVDescHeap();
-    // 深度バッファの生成
-    void DepthBuffer();
-    // フェンスの生成
-    void Fence();
+    void DXGIDevice(); // デバイスの生成
+
+    void Command(); // コマンドアロケータ/リスト/キューの生成
+
+    void SwapChain(); // スワップチェーンの生成
+
+    void SRVDescHeap(); // SRVDescHeapの生成
+
+    void RTVDescHeap(); // RTVDescHeapの生成
+
+    void DepthBuffer(); // 深度バッファの生成
+
+    void Fence(); // フェンスの生成
 };
 
 // インスタンスを取得

@@ -2,35 +2,11 @@
 
 void Object3d::Initialize()
 {
-    HRESULT result;
+    model = new Model;
 
-    // 定数バッファのヒープ設定
-    D3D12_HEAP_PROPERTIES heapProp{};
-    heapProp.Type = D3D12_HEAP_TYPE_UPLOAD;
-    // 定数バッファのリソース設定
-    D3D12_RESOURCE_DESC resDesc{};
-    resDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-    resDesc.Width = (sizeof(ConstBufferDataTransform) + 0xff) & ~0xff;
-    resDesc.Height = 1;
-    resDesc.DepthOrArraySize = 1;
-    resDesc.MipLevels = 1;
-    resDesc.SampleDesc.Count = 1;
-    resDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-
-    // 定数バッファの生成
-    result = GetInstanceIDX()->GetDevice()->CreateCommittedResource(
-        &heapProp,
-        D3D12_HEAP_FLAG_NONE,
-        &resDesc,
-        D3D12_RESOURCE_STATE_GENERIC_READ,
-        nullptr,
-        IID_PPV_ARGS(&constBuffTransform)
-    );
-    assert(SUCCEEDED(result));
-
-    // 定数バッファのマッピング
-    result = constBuffTransform->Map(0, nullptr, (void**)&constMapTransform);
-    assert(SUCCEEDED(result));
+    cbBuffMat.Create();
+    cbBuffMaterial.Create();
+    model->Initialize();
 }
 
 void Object3d::Update(const XMMATRIX& _matView, const XMMATRIX& _matProjection)
@@ -60,18 +36,23 @@ void Object3d::Update(const XMMATRIX& _matView, const XMMATRIX& _matProjection)
     }
 
     // 定数バッファへデータ転送
-    constMapTransform->mat = matWorld * _matView * _matProjection;
+    cbBuffMat.GetBuffMap()->mat = matWorld * _matView * _matProjection;
 }
 
-void Object3d::Draw(D3D12_VERTEX_BUFFER_VIEW& _vbView, D3D12_INDEX_BUFFER_VIEW& _ibView, UINT& _numIndices)
+void Object3d::Draw()
 {
     // 頂点バッファの設定
-    GetInstanceIDX()->GetCommandList()->IASetVertexBuffers(0, 1, &_vbView);
+    GetInstanceIDX()->GetCommandList()->IASetVertexBuffers(0, 1, &model->vbView);
     // インデックスバッファの設定
-    GetInstanceIDX()->GetCommandList()->IASetIndexBuffer(&_ibView);
+    GetInstanceIDX()->GetCommandList()->IASetIndexBuffer(&model->ibView);
     // 定数バッファビュー（CBV）の設定コマンド
-    GetInstanceIDX()->GetCommandList()->SetGraphicsRootConstantBufferView(2, constBuffTransform->GetGPUVirtualAddress());
+    GetInstanceIDX()->GetCommandList()->SetGraphicsRootConstantBufferView(2, GetCbBuffMat().constBuff->GetGPUVirtualAddress());
 
     // 描画コマンドリスト
-    GetInstanceIDX()->GetCommandList()->DrawIndexedInstanced(_numIndices, 1, 0, 0, 0);
+    GetInstanceIDX()->GetCommandList()->DrawIndexedInstanced(model->numIndecies, 1, 0, 0, 0);
+}
+
+Object3d::~Object3d()
+{
+    delete model;
 }

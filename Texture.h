@@ -3,11 +3,12 @@
 
 class Texture
 {
-public:
-public:
+public: // メンバ関数
     void LoadWICTex(std::string path);
 
-private:
+    UINT GetIncrementSize() { return incrementSize; }
+
+private: // メンバ変数
     // エイリアステンプレート
     template<class T> using Comptr = Microsoft::WRL::ComPtr<T>;
 
@@ -16,8 +17,7 @@ private:
     ScratchImage scratchImg{}; // ビットマップ形式での画像データそのもののアドレスが入る
 
     Comptr<ID3D12Resource> texBuff = nullptr;
-    Comptr<ID3D12DescriptorHeap> srvHeap = nullptr;
 
-private:
+    UINT incrementSize;
 };
 

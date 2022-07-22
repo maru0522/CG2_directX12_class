@@ -77,6 +77,11 @@ void InitDirectX::PostDraw()
     barrierDesc.Transition.StateAfter = D3D12_RESOURCE_STATE_PRESENT; // 表示状態へ
     commandList->ResourceBarrier(1, &barrierDesc);
 #pragma endregion
+}
+
+void InitDirectX::ReadyAgainCmd()
+{
+    HRESULT result = S_FALSE;
 
 #pragma region コマンドリスト実行
     // 命令のクローズ
@@ -84,7 +89,7 @@ void InitDirectX::PostDraw()
     assert(SUCCEEDED(result));
 
     // コマンドリストの実行
-    ID3D12CommandList* commandLists[] = { commandList.Get()};
+    ID3D12CommandList* commandLists[] = { commandList.Get() };
     commandQueue->ExecuteCommandLists(1, commandLists);
     // 画面に表示するバッファをフリップ（裏表の入替え）
     result = swapChain->Present(1, 0);
@@ -261,7 +266,19 @@ void InitDirectX::SwapChain()
 
 void InitDirectX::SRVDescHeap()
 {
-    
+    HRESULT result = S_FALSE;
+
+    //シェーダリソースビュー(SRV)の最大個数
+    const size_t kMaxSRVCount = 2056;
+    // デスクリプタヒープの設定
+    D3D12_DESCRIPTOR_HEAP_DESC srvHeapDesc = {};
+    srvHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
+    srvHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;	//シェーダから見えるように
+    srvHeapDesc.NumDescriptors = kMaxSRVCount;	//デスクリプタの持てる数設定
+
+    //設定をもとにSRV用デスクリプタヒープを生成
+    result = device->CreateDescriptorHeap(&srvHeapDesc, IID_PPV_ARGS(&srvHeap));
+    assert(SUCCEEDED(result));
 }
 
 void InitDirectX::RTVDescHeap()
