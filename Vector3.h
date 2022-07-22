@@ -6,7 +6,7 @@ public:
 	float x;	// x成分
 	float y;	// y成分
 	float z;	// z成分
-
+	
 public:
 	// コンストラクタ
 	Vector3();								// 零ベクトルとする

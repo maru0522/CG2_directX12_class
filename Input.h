@@ -17,8 +17,10 @@ namespace Input
 
         // ‰Ÿ‚µ‚½uŠÔ
         bool isTrigger(UINT8 key) { return !preKeys[key] && keys[key]; }
+
         // ‰Ÿ‚³‚ê‚Ä‚¢‚é‚Æ‚«
         bool isDown(UINT8 key) { return keys[key]; }
+
         // —£‚³‚ê‚½uŠÔ
         bool isReleased(UINT8 key) { return preKeys[key] && !keys[key]; }
 

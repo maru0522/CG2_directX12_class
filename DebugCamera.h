@@ -4,6 +4,13 @@
 
 class DebugCamera
 {
+public: // メンバ変数
+#pragma region ビュー行列
+    XMFLOAT3 eye;
+    XMFLOAT3 target;
+    XMFLOAT3 up;
+#pragma endregion
+
 public: // メンバ関数
 #pragma region ビュー行列初期化用
     void SetCamEye(const float x, const float y, const float z) { eye = { x, y, z }; }
@@ -30,12 +37,6 @@ public: // メンバ関数
 private: // メンバ変数
     XMMATRIX matView;
     XMMATRIX matProjection;
-
-#pragma region ビュー行列
-    XMFLOAT3 eye;
-    XMFLOAT3 target;
-    XMFLOAT3 up;
-#pragma endregion
 
 #pragma region 射影行列
     float fovAngleY;

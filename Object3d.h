@@ -19,6 +19,13 @@ class Object3d
 public: // メンバ変数
     Model* model = nullptr;
 
+    // アフィン変換情報
+    XMFLOAT3 scale = { 1,1,1 };
+    XMFLOAT3 rotation = { 0,0,0 };
+    XMFLOAT3 position = { 0,0,0 };
+    // ワールド変換行列
+    XMMATRIX matWorld = XMMatrixIdentity();
+
 public: // メンバ関数
     void SetScale(const float x, const float y, const float z) { scale = { x, y, z }; }
     void SetRotate(const float x, const float y, const float z) { rotation = { x, y, z }; }
@@ -40,12 +47,6 @@ private: // メンバ変数
     ConstBuffer<ConstBufferDataTransform> cbBuffMat; // CB.行列用
     ConstBuffer<ConstBufferDataMaterial> cbBuffMaterial; // CB.マテリアル用
 
-    // アフィン変換情報
-    XMFLOAT3 scale;
-    XMFLOAT3 rotation;
-    XMFLOAT3 position;
-    // ワールド変換行列
-    XMMATRIX matWorld;
     // 親オブジェクトへのポインタ
     Object3d* parent = nullptr;
 };
