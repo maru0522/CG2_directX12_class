@@ -7,7 +7,7 @@ void DebugCamera::Initialize()
 }
 void DebugCamera::InitializeDef()
 {
-    SetCamEye(120, 0, -200);
+    SetCamEye(120, 0, -100);
     SetCamTarget(0, 0, 0);
     SetCamUp(0, 1, 0);
     matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));

@@ -159,10 +159,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         }
         else if (GetInstanceKeys()->isDown(DIK_NUMPAD8) || GetInstanceKeys()->isDown(DIK_NUMPAD2) ||
                  GetInstanceKeys()->isDown(DIK_NUMPAD4) || GetInstanceKeys()->isDown(DIK_NUMPAD6)) {
-            if (GetInstanceKeys()->isDown(DIK_NUMPAD8)) { devCamera.eye.y += 0.05f; }
-            if (GetInstanceKeys()->isDown(DIK_NUMPAD2)) { devCamera.eye.y -= 0.05f; }
-            if (GetInstanceKeys()->isDown(DIK_NUMPAD4)) { devCamera.eye.x -= 0.05f; }
-            if (GetInstanceKeys()->isDown(DIK_NUMPAD6)) { devCamera.eye.x += 0.05f; }
+            if (GetInstanceKeys()->isDown(DIK_NUMPAD8)) { devCamera.eye.y += 0.1f; }
+            if (GetInstanceKeys()->isDown(DIK_NUMPAD2)) { devCamera.eye.y -= 0.1f; }
+            if (GetInstanceKeys()->isDown(DIK_NUMPAD4)) { devCamera.eye.x += 0.1f; }
+            if (GetInstanceKeys()->isDown(DIK_NUMPAD6)) { devCamera.eye.x -= 0.1f; }
         }
 
 
