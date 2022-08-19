@@ -17,6 +17,10 @@ public: // メンバ関数
     Window(const char* title);
     void DelWindow();
 
+    // ウィンドウの表示状態を変更する関数
+    // デフォルト:nCmdShow = SW_SHOW
+    void SetDisplay(int nCmdShow);
+
     // ウィンドウ固定用のメッセージループ処理
     // WM_QUITならFALSEを返す
     bool IsKeep();

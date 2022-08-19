@@ -105,6 +105,11 @@ void Window::DelWindow()
     UnregisterClass(w.lpszClassName, w.hInstance);
 }
 
+void Window::SetDisplay(int nCmdShow)
+{
+    ShowWindow(hwnd, nCmdShow);
+}
+
 bool Window::IsKeep()
 {
     // メッセージ
