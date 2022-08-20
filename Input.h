@@ -28,8 +28,8 @@ namespace Input
         // エイリアステンプレート
         template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
-        ComPtr<IDirectInput8> directInput = nullptr; // DirectInput生成
-        ComPtr<IDirectInputDevice8> keyboard = nullptr; // キーボードデバイス生成
+        IDirectInput8* directInput = nullptr; // DirectInput生成
+        IDirectInputDevice8* keyboard = nullptr; // キーボードデバイス生成
         std::array<BYTE, 256> preKeys{};
         std::array<BYTE, 256> keys{};
     };
