@@ -38,6 +38,5 @@ private: // メンバ変数
     // ウィンドウハンドルの生成
     HWND hwnd;
 };
-
 // インスタンスを取得
 Window* GetInstanceWnd();

@@ -32,9 +32,6 @@ namespace Input
         ComPtr<IDirectInputDevice8> keyboard = nullptr; // キーボードデバイス生成
         std::array<BYTE, 256> preKeys{};
         std::array<BYTE, 256> keys{};
-
-        // ウィンドウのインスタンス取得
-        Window* win_ = GetInstanceWnd();
     };
     // インスタンスを取得
     Input::Keyboard* GetInstanceKeyboard();

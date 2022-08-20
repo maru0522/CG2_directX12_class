@@ -4,6 +4,9 @@ void Input::Keyboard::Initialize()
 {
     HRESULT result = S_FALSE;
 
+    // ウィンドウのインスタンス取得
+    Window* win_ = GetInstanceWnd();
+
     // DirectInputの初期化
     result = DirectInput8Create(
         win_->GetHInstance(), DIRECTINPUT_VERSION, IID_IDirectInput8, (void**)&directInput, nullptr);
@@ -29,7 +32,6 @@ void Input::Keyboard::Update()
     for (int i = 0; i < 256; i++) {
         preKeys[i] = keys[i];
     }
-
 
     // キーボード情報の取得開始
     keyboard->Acquire();
