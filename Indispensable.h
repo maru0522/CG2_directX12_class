@@ -9,7 +9,7 @@
 #include <d3dcompiler.h>    // CG2_02_01   23–‡–Ú
 #include <DirectXTex.h>     // CG2_04_03   11–‡–Ú
 #include <wrl.h>            // CG2_07_01   13–‡–Ú
-
+#include <memory>           // Ÿè‚É“ü‚ê‚½
 
 #pragma comment(lib, "d3d12.lib")           // Indispensable.h   4s–Ú
 #pragma comment(lib, "dxgi.lib")            // Indispensable.h   5s–Ú
