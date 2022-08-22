@@ -497,9 +497,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     vbView.StrideInBytes = sizeof(vertices[0]);
 
 #pragma region 頂点シェーダー
-    ID3DBlob* vsBlob = nullptr; // 頂点シェーダオブジェクト
-    ID3DBlob* psBlob = nullptr; // ピクセルシェーダオブジェクト
-    ID3DBlob* errorBlob = nullptr; // エラーオブジェクト
+    ComPtr<ID3DBlob> vsBlob = nullptr; // 頂点シェーダオブジェクト
+    ComPtr<ID3DBlob> psBlob = nullptr; // ピクセルシェーダオブジェクト
+    ComPtr<ID3DBlob> errorBlob = nullptr; // エラーオブジェクト
     // 頂点シェーダの読み込みとコンパイル
     result = D3DCompileFromFile(
         L"BasicVS.hlsl", // シェーダファイル名
