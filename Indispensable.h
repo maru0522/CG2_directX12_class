@@ -21,8 +21,10 @@ using namespace DirectX;
 
 LRESULT WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
-// 静的メンバ変数
-// 静的メンバ関数
+// pub静的メンバ変数
+// pub静的メンバ関数
+// pri静的メンバ変数
+// pri静的メンバ関数
 // pubメンバ変数
 // pubメンバ関数
 // priメンバ変数

@@ -4,6 +4,7 @@
 #include "Input.h"
 #include "InitDirectX.h"
 #include "ConstBuffer.h"
+#include "Texture.h"
 
 using namespace Microsoft::WRL;
 
@@ -531,53 +532,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     //// 配列の要素数
     //const size_t imageDataCount = textureWidth * textureHeight;
 
-    //画像イメージデータ配列
-    TexMetadata metadata{};
-    ScratchImage scratchImg{};
-
-    // WICテクスチャのロード
-    result = LoadFromWICFile(
-        L"Resources/mario.jpg",   //「Resources」フォルダの「texture.png」
-        WIC_FLAGS_NONE,
-        &metadata, scratchImg);
-
-    ScratchImage mipChain{};
-    // ミップマップ生成
-    result = GenerateMipMaps(
-        scratchImg.GetImages(), scratchImg.GetImageCount(), scratchImg.GetMetadata(),
-        TEX_FILTER_DEFAULT, 0, mipChain);
-    if (SUCCEEDED(result)) {
-        scratchImg = std::move(mipChain);
-        metadata = scratchImg.GetMetadata();
-    }
-
-    // 読み込んだディフューズテクスチャをSRGBとして扱う
-    metadata.format = MakeSRGB(metadata.format);
-
-
-    // 2枚目用
-    TexMetadata metadata2{};
-    ScratchImage scratchImg2{};
-
-    // WICテクスチャのロード
-    result = LoadFromWICFile(
-        L"Resources/reimu.png",   //「Resources」フォルダの「texture.png」
-        WIC_FLAGS_NONE,
-        &metadata2, scratchImg2);
-
-    ScratchImage mipChain2{};
-    // ミップマップ生成
-    result = GenerateMipMaps(
-        scratchImg2.GetImages(), scratchImg2.GetImageCount(), scratchImg2.GetMetadata(),
-        TEX_FILTER_DEFAULT, 0, mipChain2);
-    if (SUCCEEDED(result)) {
-        scratchImg2 = std::move(mipChain2);
-        metadata2 = scratchImg2.GetMetadata();
-    }
-
-    // 読み込んだディフューズテクスチャをSRGBとして扱う
-    metadata2.format = MakeSRGB(metadata2.format);
-
     //// 画像イメージデータ配列
     //XMFLOAT4* imageData = new XMFLOAT4[imageDataCount];		// ※必ず後で解放する
 
@@ -589,116 +543,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     //	imageData[i].w = 1.0f;		//A
     //}
 
-    // ヒープ設定
-    D3D12_HEAP_PROPERTIES textureHeapProp{};
-    textureHeapProp.Type = D3D12_HEAP_TYPE_CUSTOM;
-    textureHeapProp.CPUPageProperty = D3D12_CPU_PAGE_PROPERTY_WRITE_BACK;
-    textureHeapProp.MemoryPoolPreference = D3D12_MEMORY_POOL_L0;
-
-    // リソース設定
-    D3D12_RESOURCE_DESC textureResourceDesc{};
-    textureResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
-    textureResourceDesc.Format = metadata.format;
-    textureResourceDesc.Width = metadata.width;
-    textureResourceDesc.Height = (UINT)metadata.height;
-    textureResourceDesc.DepthOrArraySize = (UINT16)metadata.arraySize;
-    textureResourceDesc.MipLevels = (UINT16)metadata.mipLevels;
-    textureResourceDesc.SampleDesc.Count = 1;
-
-    // リソース設定2
-    D3D12_RESOURCE_DESC textureResourceDesc2{};
-    textureResourceDesc2.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
-    textureResourceDesc2.Format = metadata2.format;
-    textureResourceDesc2.Width = metadata2.width;
-    textureResourceDesc2.Height = (UINT)metadata2.height;
-    textureResourceDesc2.DepthOrArraySize = (UINT16)metadata2.arraySize;
-    textureResourceDesc2.MipLevels = (UINT16)metadata2.mipLevels;
-    textureResourceDesc2.SampleDesc.Count = 1;
-
-    // テクスチャバッファの生成
-    ComPtr<ID3D12Resource> texBuff = nullptr;
-    result = iDX_->GetDevice()->CreateCommittedResource(
-        &textureHeapProp,
-        D3D12_HEAP_FLAG_NONE,
-        &textureResourceDesc,
-        D3D12_RESOURCE_STATE_GENERIC_READ,
-        nullptr,
-        IID_PPV_ARGS(&texBuff));
-    assert(SUCCEEDED(result));
-
-    // テクスチャバッファの生成2
-    ComPtr<ID3D12Resource> texBuff2 = nullptr;
-    result = iDX_->GetDevice()->CreateCommittedResource(
-        &textureHeapProp,
-        D3D12_HEAP_FLAG_NONE,
-        &textureResourceDesc2,
-        D3D12_RESOURCE_STATE_GENERIC_READ,
-        nullptr,
-        IID_PPV_ARGS(&texBuff2));
-    assert(SUCCEEDED(result));
-
-    // 全ミップマップについて
-    for (size_t i = 0; i < metadata.mipLevels; i++) {
-        // ミップマップレベルを指定してイメージを取得
-        const Image* img = scratchImg.GetImage(i, 0, 0);
-
-        // テクスチャバッファにデータ転送
-        result = texBuff->WriteToSubresource(
-            (UINT)i,
-            nullptr,		// 全領域へコピー
-            img->pixels,	// 元データアドレス
-            (UINT)img->rowPitch,	// 1ラインサイズ
-            (UINT)img->slicePitch	// 全サイズ
-        );
-        assert(SUCCEEDED(result));
-    }
-
-    // 全ミップマップについて
-    for (size_t i = 0; i < metadata2.mipLevels; i++) {
-        // ミップマップレベルを指定してイメージを取得
-        const Image* img2 = scratchImg2.GetImage(i, 0, 0);
-
-        // テクスチャバッファにデータ転送
-        result = texBuff2->WriteToSubresource(
-            (UINT)i,
-            nullptr,		// 全領域へコピー
-            img2->pixels,	// 元データアドレス
-            (UINT)img2->rowPitch,	// 1ラインサイズ
-            (UINT)img2->slicePitch	// 全サイズ
-        );
-        assert(SUCCEEDED(result));
-    }
-
     //// 元データ解放
     //delete[] imageData;
 
-    // シェーダリソースビュー設定
-    D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc{};
-    srvDesc.Format = textureResourceDesc.Format;
-    srvDesc.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-    srvDesc.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-    srvDesc.Texture2D.MipLevels = textureResourceDesc.MipLevels;
+    std::unique_ptr<Texture> tex1 = std::make_unique<Texture>("Resources/mario.jpg");
+    std::unique_ptr<Texture> tex2 = std::make_unique<Texture>("Resources/reimu.png");
 
-    // SRVヒープの先頭ハンドルを取得
-    D3D12_CPU_DESCRIPTOR_HANDLE srvHandle = iDX_->GetSrvHeap()->GetCPUDescriptorHandleForHeapStart();
-
-    // ハンドルのさす位置にシェーダーリソースビューの作成
-    iDX_->GetDevice()->CreateShaderResourceView(texBuff.Get(), &srvDesc, srvHandle);
-
-
-    // 1つハンドルを進める
-    UINT incrementSize = iDX_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
-    srvHandle.ptr += incrementSize;
-
-    // シェーダリソースビュー設定
-    D3D12_SHADER_RESOURCE_VIEW_DESC srvDesc2{};
-    srvDesc2.Format = textureResourceDesc2.Format;
-    srvDesc2.Shader4ComponentMapping = D3D12_DEFAULT_SHADER_4_COMPONENT_MAPPING;
-    srvDesc2.ViewDimension = D3D12_SRV_DIMENSION_TEXTURE2D;
-    srvDesc2.Texture2D.MipLevels = textureResourceDesc2.MipLevels;
-
-    // ハンドルの指す位置にシェーダーリソースビュー作成
-    iDX_->GetDevice()->CreateShaderResourceView(texBuff2.Get(), &srvDesc2, srvHandle);
 #pragma endregion
 
 #pragma region キーボード入力設定
@@ -878,8 +728,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         // SRVヒープの先頭ハンドルを取得(SRVを指しているはず)
         D3D12_GPU_DESCRIPTOR_HANDLE srvGpuHandle = iDX_->GetSrvHeap()->GetGPUDescriptorHandleForHeapStart();
 
-        // 2枚目を指し示すようにしたSRVのハンドルをルートパラメータ1番に設定
-        srvGpuHandle.ptr += incrementSize;
+        UINT incrementSize = iDX_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
+
+        // 読み込まれた最後のテクスチャを指し示すようにしたSRVのハンドルをルートパラメータ1番に設定
+        srvGpuHandle.ptr += incrementSize * (Texture::GetLoadTexNum() - 1);
         iDX_->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvGpuHandle);
 
         // 全オブジェクトについて処理
