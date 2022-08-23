@@ -41,9 +41,9 @@ Texture::Texture(std::string path)
     textureResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_TEXTURE2D;
     textureResourceDesc.Format = metadata.format;
     textureResourceDesc.Width = metadata.width;
-    textureResourceDesc.Height = (UINT)metadata.height;
-    textureResourceDesc.DepthOrArraySize = (UINT16)metadata.arraySize;
-    textureResourceDesc.MipLevels = (UINT16)metadata.mipLevels;
+    textureResourceDesc.Height = static_cast<UINT>(metadata.height);
+    textureResourceDesc.DepthOrArraySize = static_cast<UINT16>(metadata.arraySize);
+    textureResourceDesc.MipLevels = static_cast<UINT16>(metadata.mipLevels);
     textureResourceDesc.SampleDesc.Count = 1;
 
     // テクスチャバッファの生成
@@ -71,11 +71,11 @@ Texture::Texture(std::string path)
 
         // テクスチャバッファにデータ転送
         result = texBuff->WriteToSubresource(
-            (UINT)i,
+            static_cast<UINT>(i),
             nullptr,		// 全領域へコピー
             img->pixels,	// 元データアドレス
-            (UINT)img->rowPitch,	// 1ラインサイズ
-            (UINT)img->slicePitch	// 全サイズ
+            static_cast<UINT>(img->rowPitch),	// 1ラインサイズ
+            static_cast<UINT>(img->slicePitch)	// 全サイズ
         );
         assert(SUCCEEDED(result));
     }

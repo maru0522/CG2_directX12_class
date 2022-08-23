@@ -10,6 +10,7 @@ class ConstBuffer
 {
 public: // メンバ関数
     ConstBuffer();
+    ~ConstBuffer();
 
     // マテリアルカラーのセッティング
     void SetColor(float R, float G, float B, float A) { cMapMaterial->color = XMFLOAT4(R, G, B, A); }

@@ -36,6 +36,11 @@ ConstBuffer::ConstBuffer()
     SetColor(1.0f, 1.0f, 1.0f, 1.0f); // color: white
 }
 
+ConstBuffer::~ConstBuffer()
+{
+    CBUnMap();
+}
+
 void ConstBuffer::CBMap()
 {
     HRESULT result = S_FALSE;

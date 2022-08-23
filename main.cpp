@@ -77,6 +77,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     // 頂点データ
     // 前
     Vertex vertices[] = {
+    // 前
         {{-5.0f, -5.0f, -5.0f }, {}, {0.0f, 1.0f}},		// 左下 
         {{-5.0f,  5.0f, -5.0f }, {}, {0.0f, 0.0f}},		// 左上
         {{ 5.0f, -5.0f, -5.0f }, {}, {1.0f, 1.0f}},		// 右下
@@ -413,7 +414,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 #pragma region 定数バッファ
 
-    std::unique_ptr<ConstBuffer> cb = std::make_unique<ConstBuffer>();
+    ConstBuffer cb;
 
 #pragma endregion    
 
@@ -524,30 +525,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     //}
 #pragma endregion
 
-#pragma region テクスチャマッピング
-    //// 横方向ピクセル数
-    //const size_t textureWidth = 256;
-    //// 縦方向ピクセル数
-    //const size_t textureHeight = 256;
-    //// 配列の要素数
-    //const size_t imageDataCount = textureWidth * textureHeight;
+#pragma region テクスチャ
 
-    //// 画像イメージデータ配列
-    //XMFLOAT4* imageData = new XMFLOAT4[imageDataCount];		// ※必ず後で解放する
-
-    //// 全ピクセルの色を初期化
-    //for (size_t i = 0; i < imageDataCount; i++) {
-    //	imageData[i].x = 1.0f;		//R
-    //	imageData[i].y = 0.0f;		//G
-    //	imageData[i].z = 0.0f;		//B
-    //	imageData[i].w = 1.0f;		//A
-    //}
-
-    //// 元データ解放
-    //delete[] imageData;
-
-    std::unique_ptr<Texture> tex1 = std::make_unique<Texture>("Resources/mario.jpg");
-    std::unique_ptr<Texture> tex2 = std::make_unique<Texture>("Resources/reimu.png");
+    Texture tex1("Resources/mario.jpg");
+    Texture tex2("Resources/reimu.png");
 
 #pragma endregion
 
@@ -557,45 +538,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
 #pragma endregion
 
-    // インデックスデータ全体のサイズ
-    UINT sizeIB = static_cast<UINT>(sizeof(uint16_t) * _countof(indices));
-
-    // リソース設定
-    resDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-    resDesc.Width = sizeIB;	// インデックス情報が入る分のサイズ
-    resDesc.Height = 1;
-    resDesc.DepthOrArraySize = 1;
-    resDesc.MipLevels = 1;
-    resDesc.SampleDesc.Count = 1;
-    resDesc.Layout = D3D12_TEXTURE_LAYOUT_ROW_MAJOR;
-
-    // インデックスバッファの生成
-    ComPtr<ID3D12Resource> indexBuff = nullptr;
-    result = iDX_->GetDevice()->CreateCommittedResource(
-        &heapProp,	// ヒープ設定
-        D3D12_HEAP_FLAG_NONE,
-        &resDesc,	// リソース設定
-        D3D12_RESOURCE_STATE_GENERIC_READ,
-        nullptr,
-        IID_PPV_ARGS(&indexBuff));
-
-    // インデックスバッファをマッピング
-    uint16_t* indexMap = nullptr;
-    result = indexBuff->Map(0, nullptr, (void**)&indexMap);
-    // 全インデックスに対して
-    for (int i = 0; i < _countof(indices); i++) {
-        indexMap[i] = indices[i];	// インデックスをコピー
-    }
-    // マッピング解除
-    indexBuff->Unmap(0, nullptr);
-
-    // インデックスバッファビューの作成
-    D3D12_INDEX_BUFFER_VIEW ibView{};
-    ibView.BufferLocation = indexBuff->GetGPUVirtualAddress();
-    ibView.Format = DXGI_FORMAT_R16_UINT;
-    ibView.SizeInBytes = sizeIB;
+    
 
 #pragma endregion
+
+    size_t texNum = 0;
 
     // ゲームループ
     while (true) {
@@ -694,6 +641,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
             else if (keys_->IsDown(DIK_D)) { object3ds[0].position.x += 1.0f; }
         }
 
+        if (keys_->IsTrigger(DIK_SPACE)) {
+            texNum = 1;
+        }
+
         for (size_t i = 0; i < _countof(object3ds); i++) {
             UpdateObject3d(&object3ds[i], matView, matProjection);
         }
@@ -717,7 +668,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         iDX_->GetCommandList()->IASetIndexBuffer(&ibView);
 
 
-        iDX_->GetCommandList()->SetGraphicsRootConstantBufferView(0, cb->GetCBMaterial()->GetGPUVirtualAddress());
+        iDX_->GetCommandList()->SetGraphicsRootConstantBufferView(0, cb.GetCBMaterial()->GetGPUVirtualAddress());
         // SRVヒープの設定コマンド
         // // デスクリプタヒープの配列
         ID3D12DescriptorHeap* ppHeaps[] = { iDX_->GetSrvHeap() };
@@ -731,7 +682,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         UINT incrementSize = iDX_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
 
         // 読み込まれた最後のテクスチャを指し示すようにしたSRVのハンドルをルートパラメータ1番に設定
-        srvGpuHandle.ptr += incrementSize * (Texture::GetLoadTexNum() - 1);
+        srvGpuHandle.ptr += incrementSize * texNum;
         iDX_->GetCommandList()->SetGraphicsRootDescriptorTable(1, srvGpuHandle);
 
         // 全オブジェクトについて処理

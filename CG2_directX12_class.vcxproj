@@ -142,12 +142,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="ConstBuffer.cpp" />
+    <ClCompile Include="IndexBuffer.cpp" />
     <ClCompile Include="Indispensable.cpp" />
     <ClCompile Include="InitDirectX.cpp" />
     <ClCompile Include="Input.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Model.cpp" />
     <ClCompile Include="Obj3d.cpp" />
     <ClCompile Include="Texture.cpp" />
+    <ClCompile Include="VertexBuffer.cpp" />
     <ClCompile Include="Window.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -174,11 +177,14 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="ConstBuffer.h" />
+    <ClInclude Include="IndexBuffer.h" />
     <ClInclude Include="Indispensable.h" />
     <ClInclude Include="InitDirectX.h" />
     <ClInclude Include="Input.h" />
+    <ClInclude Include="Model.h" />
     <ClInclude Include="Obj3d.h" />
     <ClInclude Include="Texture.h" />
+    <ClInclude Include="VertexBuffer.h" />
     <ClInclude Include="Window.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
