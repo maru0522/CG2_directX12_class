@@ -15,9 +15,6 @@ public: // メンバ関数
     // privateメンバ変数: commandList を取得
     ID3D12GraphicsCommandList* GetCommandList() { return commandList.Get(); }
 
-    // privateメンバ変数: srvHeap を取得
-    ID3D12DescriptorHeap* GetSrvHeap() { return srvHeap.Get(); }
-
 private: // メンバ変数
     // エイリアステンプレート
     template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
@@ -33,9 +30,6 @@ private: // メンバ変数
  
     // SwapChain() で初期化
     ComPtr<IDXGISwapChain4> swapChain = nullptr;
-    
-    // SrvDescHeap() で初期化
-    ComPtr<ID3D12DescriptorHeap> srvHeap = nullptr;
     
     // RtvDescHeap() で初期化
     ComPtr<ID3D12DescriptorHeap> rtvHeap = nullptr;
@@ -56,7 +50,6 @@ private: // メンバ関数
     void DXGIDevice(); // アダプタの選別/デバイスの生成
     void Command(); // コマンドアロケータ/リスト/キューの生成
     void SwapChain();
-    void SrvDescHeap(); // SRV用のデスクリプタヒープの生成 + 生成するための設定（デスクリプタ）
     void RtvDescHeap(); // RTV用のデスクリプタヒープの生成 + 生成するための設定（デスクリプタ）
     // void Srv(); // SRVの生成 + 生成するための設定（デスクリプタ）
     void Rtv(); // RTVの生成 + 生成するための設定（デスクリプタ）

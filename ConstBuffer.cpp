@@ -1,7 +1,8 @@
 #include "ConstBuffer.h"
 #include "InitDirectX.h"
 
-ConstBuffer::ConstBuffer()
+template<typename CBType>
+ConstBuffer<CBType>::ConstBuffer()
 {
     HRESULT result = S_FALSE;
 
@@ -14,7 +15,7 @@ ConstBuffer::ConstBuffer()
     // リソース設定
     D3D12_RESOURCE_DESC cbResourceDesc{};
     cbResourceDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
-    cbResourceDesc.Width = (sizeof(ConstBufferDataMaterial) + 0xff) & ~0xff;	//256バイトアラインメント
+    cbResourceDesc.Width = (sizeof(CBType) + 0xff) & ~0xff;	//256バイトアラインメント
     cbResourceDesc.Height = 1;
     cbResourceDesc.DepthOrArraySize = 1;
     cbResourceDesc.MipLevels = 1;
@@ -28,29 +29,32 @@ ConstBuffer::ConstBuffer()
         &cbResourceDesc,	// リソース設定
         D3D12_RESOURCE_STATE_GENERIC_READ,
         nullptr,
-        IID_PPV_ARGS(&cBMaterial));
+        IID_PPV_ARGS(&buffer));
     assert(SUCCEEDED(result));
 
     // 定数バッファのマッピング
     CBMap();
-    SetColor(1.0f, 1.0f, 1.0f, 1.0f); // color: white
+    //SetColor(1.0f, 1.0f, 1.0f, 1.0f); // color: white
 }
 
-ConstBuffer::~ConstBuffer()
+template<typename CBType>
+ConstBuffer<CBType>::~ConstBuffer()
 {
     CBUnMap();
 }
 
-void ConstBuffer::CBMap()
+template<typename CBType>
+void ConstBuffer<CBType>::CBMap()
 {
     HRESULT result = S_FALSE;
 
     // 定数バッファのマッピング
-    result = cBMaterial->Map(0, nullptr, (void**)&cMapMaterial);		// マッピング
+    result = buffer->Map(0, nullptr, (void**)&cbTypeMap);		// マッピング
     assert(SUCCEEDED(result));
 }
 
-void ConstBuffer::CBUnMap()
+template<typename CBType>
+void ConstBuffer<CBType>::CBUnMap()
 {
-    cBMaterial->Unmap(0, nullptr);
+    buffer->Unmap(0, nullptr);
 }

@@ -8,12 +8,6 @@
 
 using namespace Microsoft::WRL;
 
-
-// 定数バッファ用データ構造体（3D変換行列）
-struct ConstBufferDataTransform {
-    XMMATRIX mat;		// 3D変換行列
-};
-
 // 3Dオブジェクト型
 struct Object3d
 {

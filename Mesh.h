@@ -1,5 +1,11 @@
 #pragma once
 #include "Indispensable.h"
+#include "ConstBuffer.h"
+
+// 定数バッファ用データ構造体（マテリアル）
+struct ConstBufferDataMaterial {
+    XMFLOAT4 color;		// 色（RGBA）
+};
 
 // 頂点データ構造体
 struct Vertex
@@ -9,12 +15,13 @@ struct Vertex
     XMFLOAT2 uv;        // uv座標
 };
 
-class Model
+class Mesh
 {
-    Model();
+public: // メンバ関数
+    Mesh();
 
 private: // メンバ変数
-// エイリアステンプレート
+    // エイリアステンプレート
     template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
 
     // バッファの作成
@@ -24,5 +31,8 @@ private: // メンバ変数
     // ビューの作成
     D3D12_VERTEX_BUFFER_VIEW vbView{};
     D3D12_INDEX_BUFFER_VIEW ibView{};
+
+    // 定数バッファ
+    ConstBuffer<ConstBufferDataMaterial> cbMaterialMap{};
 };
 

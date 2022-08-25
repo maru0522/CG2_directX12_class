@@ -260,24 +260,6 @@ void InitDirectX::SwapChain()
 #pragma endregion
 }
 
-void InitDirectX::SrvDescHeap()
-{
-    HRESULT result = S_FALSE;
-
-    // SRVの最大個数
-    const size_t kMaxSRVCount = 2056; 
-
-    // デスクリプタヒープの設定
-    D3D12_DESCRIPTOR_HEAP_DESC srvDescHeapDesc = {};
-    srvDescHeapDesc.Type = D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV;
-    srvDescHeapDesc.Flags = D3D12_DESCRIPTOR_HEAP_FLAG_SHADER_VISIBLE;	// シェーダから見えるように
-    srvDescHeapDesc.NumDescriptors = kMaxSRVCount;
-
-    // 設定を元にSRV用デスクリプタヒープを作成
-    result = device->CreateDescriptorHeap(&srvDescHeapDesc, IID_PPV_ARGS(&srvHeap));
-    assert(SUCCEEDED(result));
-}
-
 void InitDirectX::RtvDescHeap()
 {
     HRESULT result = S_FALSE;

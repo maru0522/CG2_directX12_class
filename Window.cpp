@@ -24,7 +24,7 @@ namespace {
     }
 }
 
-const wchar_t Window::windowClassName[] = L"mEngine";
+const wchar_t Window::windowClassName[] = L"maruyamaEngine";
 
 Window::Window()
 {
@@ -45,7 +45,7 @@ Window::Window()
 
     // ウィンドウオブジェクトの生成
     hwnd = CreateWindow(
-        L"mEngine",           // タイトルバーの文字
+        windowClassName,           // タイトルバーの文字
         w.lpszClassName,      // クラス名
         WS_OVERLAPPEDWINDOW,  // 標準的なウィンドウスタイル
         CW_USEDEFAULT,        // 表示X座標（OSに任せる）

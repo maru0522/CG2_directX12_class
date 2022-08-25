@@ -1,5 +1,6 @@
 #include "Texture.h"
 #include "InitDirectX.h"
+#include "TextureManeger.h"
 
 size_t Texture::loadTexNum = 0;
 
@@ -7,6 +8,7 @@ Texture::Texture(std::string path)
 {
     HRESULT result = S_FALSE;
     InitDirectX* iDX_ = GetInstanceIDX();
+    TextureManeger* texM_ = GetInstanceTexM();
 
     std::wstring wStrPath(path.begin(), path.end());
     const wchar_t* szFile = wStrPath.c_str();
@@ -57,12 +59,12 @@ Texture::Texture(std::string path)
     assert(SUCCEEDED(result));
 
     // SRVヒープの先頭ハンドルを取得
-    D3D12_CPU_DESCRIPTOR_HANDLE srvHandle = iDX_->GetSrvHeap()->GetCPUDescriptorHandleForHeapStart();
+    srvCPUHandle = texM_->GetSrvHeap()->GetCPUDescriptorHandleForHeapStart();
 
     // デスクリプタのサイズを取得する。
     UINT incrementSize = iDX_->GetDevice()->GetDescriptorHandleIncrementSize(D3D12_DESCRIPTOR_HEAP_TYPE_CBV_SRV_UAV);
     // 1枚目があるなら進める。3枚目以降は += incrementSize * 作成したSRVの数（テクスチャ）する必要がある。
-    srvHandle.ptr += incrementSize * loadTexNum;
+    srvCPUHandle.ptr += incrementSize * loadTexNum;
 
     // 全ミップマップについて
     for (size_t i = 0; i < metadata.mipLevels; i++) {
@@ -88,7 +90,10 @@ Texture::Texture(std::string path)
     srvDesc.Texture2D.MipLevels = textureResourceDesc.MipLevels;
 
     // ハンドルのさす位置にシェーダーリソースビューの作成
-    iDX_->GetDevice()->CreateShaderResourceView(texBuff.Get(), &srvDesc, srvHandle);
+    iDX_->GetDevice()->CreateShaderResourceView(texBuff.Get(), &srvDesc, srvCPUHandle);
+
+    srvGPUHandle = texM_->GetSrvHeap()->GetGPUDescriptorHandleForHeapStart();
+    srvCPUHandle.ptr += incrementSize * loadTexNum;
 
     loadTexNum++;
 }

@@ -1,7 +1,7 @@
-#include "Model.h"
+#include "Mesh.h"
 #include "InitDirectX.h"
 
-Model::Model()
+Mesh::Mesh()
 {
     HRESULT result = S_FALSE;
 
