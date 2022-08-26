@@ -1,8 +1,7 @@
-
-#include "TextureManeger.h"
+#include "TextureManager.h"
 #include "InitDirectX.h"
 
-void TextureManeger::Load(std::string& fileName)
+void TextureManager::Load(const std::string& fileName)
 {
     // SRVDescに空きがあるかどうか
     assert(("Message: SRVがDescの最大数に達しました。。これ以上テクスチャを読み込みません。", indexNextDescHeap < maxSRVDesc));
@@ -27,7 +26,7 @@ void TextureManeger::Load(std::string& fileName)
 
     HRESULT result = S_FALSE;
     InitDirectX* iDX_ = GetInstanceIDX();
-    TextureManeger* texM_ = GetInstanceTexM();
+    TextureManager* texM_ = GetInstanceTexM();
 
     //画像イメージデータ配列
     TexMetadata metadata{}; // 画像のサイズ等、テクスチャとしての各種情報が入る
@@ -114,7 +113,12 @@ void TextureManeger::Load(std::string& fileName)
     indexNextDescHeap++;
 }
 
-TextureManeger::TextureManeger()
+void TextureManager::LoadTexture(const std::string& fileName)
+{
+    texM.Load(fileName);
+}
+
+TextureManager::TextureManager()
 {
     HRESULT result = S_FALSE;
 
@@ -131,7 +135,7 @@ TextureManeger::TextureManeger()
     assert(SUCCEEDED(result));
 }
 
-const Texture* TextureManeger::GetTextureHandle(const std::string& fileName)
+const Texture* TextureManager::GetTextureHandle(const std::string& fileName)
 {
     // 同じファイル名のテクスチャを検索
     auto iterator = std::find_if(textures.begin(), textures.end(), [&](const auto& texture) { return texture.name == fileName; });
@@ -153,8 +157,8 @@ const Texture* TextureManeger::GetTextureHandle(const std::string& fileName)
     return &texMirror_;
 }
 
-static TextureManeger texM;
-TextureManeger* GetInstanceTexM()
+static TextureManager texM;
+TextureManager* GetInstanceTexM()
 {
     return &texM;
 }

@@ -20,6 +20,18 @@ class Mesh
 public: // メンバ関数
     Mesh();
 
+    // privateメンバ変数: vbView を取得
+    D3D12_VERTEX_BUFFER_VIEW* GetVbView() { return &vbView; }
+
+    // privateメンバ変数: ibView を取得
+    D3D12_INDEX_BUFFER_VIEW* GetIbView() { return &ibView; }
+
+    // privateメンバ変数: vertices を取得
+    std::vector<Vertex>* GetVertices() { return &vertices; }
+
+    // privateメンバ変数: indices を取得
+    std::vector<uint16_t>* GetIndices() { return &indices; }
+
 private: // メンバ変数
     // エイリアステンプレート
     template<class T> using ComPtr = Microsoft::WRL::ComPtr<T>;
@@ -34,5 +46,10 @@ private: // メンバ変数
 
     // 定数バッファ
     ConstBuffer<ConstBufferDataMaterial> cbMaterialMap{};
+
+    // vertex
+    std::vector<Vertex> vertices;
+    // index
+    std::vector<uint16_t> indices;
 };
 

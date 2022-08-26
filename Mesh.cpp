@@ -8,7 +8,7 @@ Mesh::Mesh()
     InitDirectX* iDX_ = GetInstanceIDX();
 
     // 頂点データ
-    Vertex vertices[] = {
+    vertices = {
         // 前
             {{-5.0f, -5.0f, -5.0f }, {}, {0.0f, 1.0f}},		// 左下 
             {{-5.0f,  5.0f, -5.0f }, {}, {0.0f, 0.0f}},		// 左上
@@ -42,7 +42,7 @@ Mesh::Mesh()
     };
 
     // インデックスデータ
-    unsigned short indices[] =
+    indices =
     {
         // 前
             0,1,2,      //三角形1つ目
@@ -64,7 +64,7 @@ Mesh::Mesh()
             22,21,23,   //三角形12つ目
     };
 
-    for (int i = 0; i < _countof(indices) / 3; i++) {
+    for (int i = 0; i < indices.size() / 3; i++) {
         // 三角形1つごとに計算していく
         // 三角形のインデックスを取り出して、一時的な変数に入れる
         unsigned short index0 = indices[i * 3 + 0];
@@ -89,7 +89,7 @@ Mesh::Mesh()
 
 #pragma region vb
     // 頂点データ全体のサイズ = 頂点データ一つ分のサイズ * 頂点データの要素数
-    UINT sizeVB = static_cast<UINT>(sizeof(Vertex) * _countof(vertices));
+    UINT sizeVB = static_cast<UINT>(sizeof(Vertex) * vertices.size());
 
     // 頂点バッファの設定
     D3D12_HEAP_PROPERTIES heapProp{}; // ヒープ設定
@@ -121,7 +121,7 @@ Mesh::Mesh()
     assert(SUCCEEDED(result));
 
     // 全頂点に対して
-    for (int i = 0; i < _countof(vertices); i++) {
+    for (int i = 0; i < vertices.size(); i++) {
         vertMap[i] = vertices[i];//座標をコピー
     }
 
@@ -136,7 +136,7 @@ Mesh::Mesh()
 
 #pragma region ib
     // インデックスデータ全体のサイズ
-    UINT sizeIB = static_cast<UINT>(sizeof(uint16_t) * _countof(indices));
+    UINT sizeIB = static_cast<UINT>(sizeof(uint16_t) * indices.size());
 
     // リソース設定
     resDesc.Dimension = D3D12_RESOURCE_DIMENSION_BUFFER;
@@ -161,7 +161,7 @@ Mesh::Mesh()
     result = indexBuff->Map(0, nullptr, (void**)&indexMap);
 
     // 全インデックスに対して
-    for (int i = 0; i < _countof(indices); i++) {
+    for (int i = 0; i < indices.size(); i++) {
         indexMap[i] = indices[i];	// インデックスをコピー
     }
 

@@ -12,18 +12,21 @@ struct Texture
     D3D12_GPU_DESCRIPTOR_HANDLE srvGPUHandle{}; // GPU
 };
 
-class TextureManeger
+class TextureManager
 {
 public: // 静的メンバ関数
-    void Load(std::string& fileName);
+    //static void LoadTexture(const std::string& fileName);
 
 private: // 静的メンバ変数
     // SRVの最大個数
     static const size_t maxSRVDesc = 256;
 
 public: // メンバ関数
-    TextureManeger();
+    TextureManager();
 
+    void Load(const std::string& fileName);
+
+    // 既に読み込んだテクスチャのSRVのハンドルを返す
     const Texture* GetTextureHandle(const std::string& fileName);
 
     // privateメンバ変数: srvHeap を取得
@@ -44,5 +47,5 @@ private: // メンバ変数
 
 };
 // インスタンスを取得
-TextureManeger* GetInstanceTexM();
+TextureManager* GetInstanceTexM();
 
