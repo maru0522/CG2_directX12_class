@@ -430,14 +430,19 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     //}
 
     // 射影変換行列（透視投影）
-    Matrix4 matProjection = XMMatrixPerspectiveFovLH(
+    XMMATRIX matProjection = XMMatrixPerspectiveFovLH(
         XMConvertToRadians(45.0f),				// 上下画角45度
         (float)win_->width / win_->height,	// アスペクト比（画面横幅/画面縦幅)
         0.1f, 1000.0f							// 前端,奥端
     );
 
+    XMMATRIX m(1, 2, 3, 4,
+               5, 6, 7, 8,
+               9, 10, 11, 12,
+               13, 14, 15, 16);
+
     // ビュー変換行列（グローバル変数）
-    Matrix4 matView;
+    XMMATRIX matView;
     XMFLOAT3 eye(0, 0, -100);		// 視点座標
     XMFLOAT3 target(0, 0, 0);		// 注視点座標
     XMFLOAT3 up(0, 1, 0);			// 上方向ベクトル
@@ -606,12 +611,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         //constMapTransform1->mat = matWorld1 * matView * matProjection;
 #pragma endregion
 
-        if (keys_->IsDown(DIK_W) || keys_->IsDown(DIK_S) || keys_->IsDown(DIK_A) || keys_->IsDown(DIK_D)) {
-            if (keys_->IsDown(DIK_W)) { object3ds[0].position.y += 1.0f; }
-            else if (keys_->IsDown(DIK_S)) { object3ds[0].position.y -= 1.0f; }
-            if (keys_->IsDown(DIK_A)) { object3ds[0].position.x -= 1.0f; }
-            else if (keys_->IsDown(DIK_D)) { object3ds[0].position.x += 1.0f; }
-        }
+        //if (keys_->IsDown(DIK_W) || keys_->IsDown(DIK_S) || keys_->IsDown(DIK_A) || keys_->IsDown(DIK_D)) {
+        //    if (keys_->IsDown(DIK_W)) { object3ds[0].position.y += 1.0f; }
+        //    else if (keys_->IsDown(DIK_S)) { object3ds[0].position.y -= 1.0f; }
+        //    if (keys_->IsDown(DIK_A)) { object3ds[0].position.x -= 1.0f; }
+        //    else if (keys_->IsDown(DIK_D)) { object3ds[0].position.x += 1.0f; }
+        //}
 
         if (keys_->IsTrigger(DIK_SPACE)) {
             texNum = 1;
