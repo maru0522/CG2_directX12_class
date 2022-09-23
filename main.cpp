@@ -1391,7 +1391,7 @@ void UpdateObject3d(Object3d* object, XMMATRIX& matView, XMMATRIX& matProjection
     matRot *= XMMatrixRotationX(object->rotation.x);
     matRot *= XMMatrixRotationY(object->rotation.y);
     matTrans = XMMatrixTranslation(
-        object->position.x, object->position.y, object->position.x
+        object->position.x, object->position.y, object->position.z
     );
 
     // ワールド行列の合成
