@@ -11,14 +11,11 @@ using namespace DirectX;
 #include<Windows.h>
 #include<vector>
 #include<string>
-#define DIRECTINPUT_VERSION 0x0800
-#include<dinput.h>
-#pragma comment(lib,"dinput8.lib")
-#pragma comment(lib,"dxguid.lib")
 #include<DirectXTex.h>
 #include<wrl.h>
 
 #include "Window.h"
+#include "Input.h"
 
 using namespace Microsoft::WRL;
 
@@ -75,7 +72,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     }
 #endif
 #pragma endregion
-
 
 #pragma region DirectX初期化
     //DirectX初期化
@@ -292,26 +288,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #pragma endregion
 
 #pragma region DirectInput初期化
-    // DirectInputの初期化
-    IDirectInput8* directInput = nullptr;
-    result = DirectInput8Create(
-        wnd_->GetHInstance(), DIRECTINPUT_VERSION, IID_IDirectInput8,
-        (void**)&directInput, nullptr);
-    assert(SUCCEEDED(result));
+    
+    Input::Keyboard::Initialize();
 
-    // キーボードデバイスの生成
-    IDirectInputDevice8* keyboard = nullptr;
-    result = directInput->CreateDevice(GUID_SysKeyboard, &keyboard, NULL);
-    assert(SUCCEEDED(result));
-
-    // 入力データ形式のセット
-    result = keyboard->SetDataFormat(&c_dfDIKeyboard); // 標準形式
-    assert(SUCCEEDED(result));
-
-    // 排他制御レベルのセット
-    result = keyboard->SetCooperativeLevel(
-        wnd_->GetHwnd(), DISCL_FOREGROUND | DISCL_NONEXCLUSIVE | DISCL_NOWINKEY);
-    assert(SUCCEEDED(result));
 #pragma endregion
 
 #pragma endregion
@@ -979,11 +958,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
     device->CreateShaderResourceView(texBuff2.Get(), &srvDesc2, srvHandle);
 #pragma endregion
 
-#pragma region キーボード入力設定
-    //BYTE prekeys[256];
-    BYTE keys[256] = {};
-#pragma endregion
-
     // インデックスデータ全体のサイズ
     UINT sizeIB = static_cast<UINT>(sizeof(uint16_t) * _countof(indices));
 
@@ -1069,10 +1043,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #pragma endregion
 
 #pragma region キーボード情報の取得
-        // キーボード情報の取得開始
-        keyboard->Acquire();
-        // 全キーの入力状態を取得する
-        keyboard->GetDeviceState(sizeof(keys), keys);
+
+        Input::Keyboard::Update();
+
 #pragma endregion
 
         matView = XMMatrixLookAtLH(XMLoadFloat3(&eye), XMLoadFloat3(&target), XMLoadFloat3(&up));
@@ -1145,12 +1118,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         //constMapTransform1->mat = matWorld1 * matView * matProjection;
 #pragma endregion
 
-        if (keys[DIK_W] || keys[DIK_S] || keys[DIK_A] || keys[DIK_D]) {
+        /*if (keys[DIK_W] || keys[DIK_S] || keys[DIK_A] || keys[DIK_D]) {
             if (keys[DIK_W]) { object3ds[0].position.y += 1.0f; }
             else if (keys[DIK_S]) { object3ds[0].position.y -= 1.0f; }
             if (keys[DIK_A]) { object3ds[0].position.x -= 1.0f; }
             else if (keys[DIK_D]) { object3ds[0].position.x += 1.0f; }
-        }
+        }*/
 
         for (size_t i = 0; i < _countof(object3ds); i++) {
             UpdateObject3d(&object3ds[i], matView, matProjection);
