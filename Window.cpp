@@ -17,14 +17,16 @@ LRESULT Window::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
     return DefWindowProc(hwnd, msg, wparam, lparam);
 }
 
+const wchar_t Window::windowClassName[] = L"maruyamaEngine";
+
 Window::Window()
 {
     // ウィンドウクラスの設定
     w.cbSize = sizeof(WNDCLASSEX);
-    w.lpfnWndProc = static_cast<WNDPROC>(WindowProc);     // ウィンドウプロシージャを設定
-    w.lpszClassName = windowClassName;       // ウィンドウクラス名
-    w.hInstance = GetModuleHandle(nullptr);  // ウィンドウハンドル
-    w.hCursor = LoadCursor(NULL, IDC_ARROW); // カーソル指定
+    w.lpfnWndProc = static_cast<WNDPROC>(WindowProc);   // ウィンドウプロシージャを設定
+    w.lpszClassName = windowClassName;                  // ウィンドウクラス名
+    w.hInstance = GetModuleHandle(nullptr);             // ウィンドウハンドル
+    w.hCursor = LoadCursor(NULL, IDC_ARROW);            // カーソル指定
 
     // ウィンドウクラスをOSに登録する
     RegisterClassEx(&w);
@@ -57,10 +59,10 @@ Window::Window(const char* title)
 {
     // ウィンドウクラスの設定
     w.cbSize = sizeof(WNDCLASSEX);
-    w.lpfnWndProc = (WNDPROC)WindowProc;     // ウィンドウプロシージャを設定
-    w.lpszClassName = windowClassName;       // ウィンドウクラス名
-    w.hInstance = GetModuleHandle(nullptr);  // ウィンドウハンドル
-    w.hCursor = LoadCursor(NULL, IDC_ARROW); // カーソル指定
+    w.lpfnWndProc = static_cast<WNDPROC>(WindowProc);   // ウィンドウプロシージャを設定
+    w.lpszClassName = windowClassName;                  // ウィンドウクラス名
+    w.hInstance = GetModuleHandle(nullptr);             // ウィンドウハンドル
+    w.hCursor = LoadCursor(NULL, IDC_ARROW);            // カーソル指定
 
     // ウィンドウクラスをOSに登録する
     RegisterClassEx(&w);
