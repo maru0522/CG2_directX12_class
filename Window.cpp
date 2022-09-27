@@ -2,6 +2,12 @@
 #include <string>
 #include "Util.h"
 
+static Window wnd;
+Window* Window::GetInstance()
+{
+    return &wnd;
+}
+
 LRESULT Window::WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam)
 {
     // メッセージに応じてゲーム固有の処理を行う
@@ -117,10 +123,4 @@ bool Window::IsKeep()
 
     // ✖ボタンで終了メッセージが来たらゲームループを抜ける
     return msg.message != WM_QUIT;
-}
-
-static Window wnd;
-Window* GetInstanceWnd()
-{
-    return &wnd;
 }

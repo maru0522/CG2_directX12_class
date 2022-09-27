@@ -3,6 +3,10 @@
 
 class Window
 {
+public: // 静的関数
+    static Window* GetInstance(); // インスタンスを取得
+    static LRESULT WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
+
 public: // 静的変数
     // ウィンドウサイズ
     static const size_t width = 1280;
@@ -10,9 +14,6 @@ public: // 静的変数
 
     // ウィンドウクラス名
     static const wchar_t windowClassName[];
-
-public: // 静的関数
-    static LRESULT WindowProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
 
 public: // 関数
     Window();
@@ -33,13 +34,10 @@ public: // 関数
 
     HINSTANCE GetHInstance() const { return w.hInstance; }
 
-private: // メンバ変数
+private: // 変数
     // ウィンドウクラスの生成
     WNDCLASSEX w{};
 
     // ウィンドウハンドルの生成
     HWND hwnd;
 };
-
-// インスタンスを取得
-Window* GetInstanceWnd();

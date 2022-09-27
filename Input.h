@@ -9,7 +9,7 @@
 namespace Input {
     class Keyboard
     {
-    public: // メンバ関数
+    public: // 関数
         static void Initialize();
         static void Update();
 
@@ -22,7 +22,7 @@ namespace Input {
         // 離された瞬間
         static bool IsReleased(UINT8 key) { return preKeys[key] && !keys[key]; }
 
-    private: // メンバ変数
+    private: // 変数
         static IDirectInput8* directInput; // DirectInput生成
         static IDirectInputDevice8* keyboard; // キーボードデバイス生成
         static std::array<BYTE, 256> preKeys;
