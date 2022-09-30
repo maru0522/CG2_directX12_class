@@ -66,9 +66,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #pragma region DirectX初期化
 
     InitDirectX* iDX_ = InitDirectX::GetInstance();
+    iDX_->Initialize();
 
     //DirectX初期化
     HRESULT result;
+
+#pragma region DirectInput初期化
+    
+    Input::Keyboard::Initialize();
+
+#pragma endregion
 
 #pragma region srv
     // SRVの最大個数
@@ -87,12 +94,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 
     // SRVヒープの先頭ハンドルを取得
     D3D12_CPU_DESCRIPTOR_HANDLE srvHandle = srvHeap->GetCPUDescriptorHandleForHeapStart();
-#pragma endregion
-
-#pragma region DirectInput初期化
-    
-    Input::Keyboard::Initialize();
-
 #pragma endregion
 
 #pragma endregion

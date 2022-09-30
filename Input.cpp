@@ -12,7 +12,7 @@ void Input::Keyboard::Initialize()
     HRESULT result = S_FALSE;
 
     // ウィンドウのインスタンス取得
-    Window* wnd_ = GetInstanceWnd();
+    Window* wnd_ = Window::GetInstance();
 
     // DirectInputの初期化
     result = DirectInput8Create(
