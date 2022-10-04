@@ -110,16 +110,15 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
 #pragma endregion
 
 #pragma region デバッグレイヤ
-
 #ifdef _DEBUG
     //デバッグレイヤーをオンに
-    ComPtr<ID3D12Debug> debugController;
+    ComPtr<ID3D12Debug1> debugController;
     if (SUCCEEDED(D3D12GetDebugInterface(IID_PPV_ARGS(&debugController)))) {
         debugController->EnableDebugLayer();
+        debugController->SetEnableGPUBasedValidation(true);
     }
 #endif
 #pragma endregion
-
 
 #pragma region DirectX初期化
     //DirectX初期化
@@ -188,6 +187,29 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int) {
         }
     }
 #pragma endregion
+
+#ifdef _DEBUG
+    ComPtr<ID3D12InfoQueue> infoQueue;
+    if (SUCCEEDED(device->QueryInterface(IID_PPV_ARGS(&infoQueue)))) {
+        infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, true);    //やばいエラーの時止まる
+        infoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, true);        //エラーの時止まる
+    }
+
+    //抑制するエラー
+    D3D12_MESSAGE_ID denyIds[] = {
+        D3D12_MESSAGE_ID_RESOURCE_BARRIER_MISMATCHING_COMMAND_LIST_TYPE
+    };
+
+    //抑制される表示レベル
+    D3D12_MESSAGE_SEVERITY severities[] = { D3D12_MESSAGE_SEVERITY_INFO };
+    D3D12_INFO_QUEUE_FILTER filter{};
+    filter.DenyList.NumIDs = _countof(denyIds);
+    filter.DenyList.pIDList = denyIds;
+    filter.DenyList.NumSeverities = _countof(severities);
+    filter.DenyList.pSeverityList = severities;
+    //指定したエラーの表示を抑制する
+    infoQueue->PushStorageFilter(&filter);
+#endif // DEBUG
 
 #pragma region コマンドリストの生成
     // コマンドアロケータを生成
